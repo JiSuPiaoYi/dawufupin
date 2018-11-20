@@ -1,0 +1,135 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .list-group{
+        min-height: 176px;
+    }
+    .list-group-item{
+        border: none;
+        border-bottom: 1px solid #ddd;
+        background-color: transparent;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+    .layui-card-header{
+        border-bottom: 1px solid #ddd;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+{#    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">#}
+{#      <legend>卡片面板</legend>#}
+{#    </fieldset>#}
+
+{#    <div style="padding: 20px;">#}
+{#      <div class="layui-row layui-col-space15">#}
+{#        <div class="layui-col-md6">#}
+{#          <div class="layui-card">#}
+{#            <div class="layui-card-header">#}
+{#                通告#}
+{#                <a href="#" style="float: right;margin-right: 10px;">more</a>#}
+{#            </div>#}
+{#            <div class="layui-card-body">#}
+{#                <ul class="list-group">#}
+{#                    {% for annunciate in annunciates %}#}
+{#                    <a class="list-group-item" href="{% url 'annunciate_info' %}?id={{ annunciate.id }}">{{ annunciate.title }}</a>#}
+{#                        {% empty %}#}
+{#                        <li class="list-group-item" style="text-align: center;">暂无政令</li>#}
+{#                    {% endfor %}#}
+{#                </ul>#}
+{#            </div>#}
+{#          </div>#}
+{#        </div>#}
+{#        <div class="layui-col-md6">#}
+{#          <div class="layui-card">#}
+{#            <div class="layui-card-header">#}
+{#                政令#}
+{#                <a href="#" style="float: right;margin-right: 10px;">more</a>#}
+{#            </div>#}
+{#            <div class="layui-card-body">#}
+{#                <ul class="list-group">#}
+{#                    {% for governmentdecree in governmentdecrees %}#}
+{#                    <a class="list-group-item" href="{% url 'governmentdecree_info' %}?id={{ governmentdecree.id }}">{{ governmentdecree.title }}</a>#}
+{#                        {% empty %}#}
+{#                        <li class="list-group-item" style="text-align: center;">暂无政令</li>#}
+{#                    {% endfor %}#}
+{#                </ul>#}
+{#            </div>#}
+{#          </div>#}
+{#        </div>#}
+{#        <div class="layui-col-md12">#}
+{#          <div class="layui-card">#}
+{#            <div class="layui-card-header"><strong>通告和政令</strong></div>#}
+{#            <div class="layui-card-body">#}
+{#                <ul class="list-group">#}
+{#                    {% for annunciate in annunciates %}#}
+{#                    <a class="list-group-item" href="{% url 'annunciate_info' %}?id={{ annunciate.id }}">{{ annunciate.title }}</a>#}
+{#                    {% endfor %}#}
+{#                    {% for governmentdecree in governmentdecrees %}#}
+{#                    <a class="list-group-item" href="{% url 'governmentdecree_info' %}?id={{ governmentdecree.id }}">{{ governmentdecree.title }}</a>#}
+{#                    {% endfor %}#}
+{#                    {% if annunciates|length == 0 and governmentdecrees|length == 0 %}#}
+{#                        <li class="list-group-item" style="text-align: center;">暂无政令</li>#}
+{#                    {% endif %}#}
+{#                </ul>#}
+{#            </div>#}
+{#          </div>#}
+{#        </div>#}
+{#      </div>#}
+{#    </div>#}
+
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li class="active">通告和政令</li>
+        </h3>
+    </div>
+
+    <table class="layui-table" lay-size="lg" lay-skin="nob">
+        <tbody>
+        {% for i in data %}
+            <tr>
+                <td style="width: 100px;">
+                    {% if i.type == 1 %}
+                        <span class="layui-badge layui-bg-green">通告</span>
+                    {% elif i.type == 2 %}
+                        <span class="layui-badge layui-bg-blue">政令</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if i.type == 1 %}
+                        <a href="{% url 'annunciate_info' %}?id={{ i.id }}">{{ i.title }}</a>
+                    {% elif i.type == 2 %}
+                        <a href="{% url 'governmentdecree_info' %}?id={{ i.id }}">{{ i.title }}</a>
+                    {% else %}
+                        {{ i.title }}
+                    {% endif %}
+
+                </td>
+                <td style="width: 150px;">{{ i.create_time|date:'Y-m-d' }}</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+{% endblock %}
+{% block script %}
+{#    <script>#}
+{#    layui.use('layer', function() {#}
+{#        var $ = layui.jquery, layer = layui.layer;#}
+{##}
+{#        layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {#}
+{#            time: 5000, //5s后自动关闭#}
+{#            shade :0.1,#}
+{#            area: ['220px', '180px'],#}
+{#        });#}
+{#    });#}
+{#    </script>#}
+{% endblock %}

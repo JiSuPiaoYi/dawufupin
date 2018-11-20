@@ -1,0 +1,110 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}审核{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .layui-table td, .layui-table th, .layui-table-fixed-r, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row]{
+        border-color:#ffffff;
+    }
+    #paginator{
+        margin-top:30px;
+        text-align: center;
+        border-top: 1px solid #eee;
+    }
+        .layui-table td{
+            border-top: none;
+        }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>综合管理</li>
+            <li class="active">审核</li>
+        </h3>
+    </div>
+
+
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li><a href="/excel_view/excel_approve/">审核</a></li>
+            <li class="layui-this"><a href="/excel_view/excel_approve1/">本部门提交的</a></li>
+        </ul>
+    </div>
+
+
+    <table class="layui-table">
+        <caption>
+            <col width="50%">
+            <col width="30%">
+            <col width="20%">
+        </caption>
+        <thead>
+            <tr>
+                <th>文件</th>
+                <th>备注</th>
+                <th>状态或操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for obj in obj_list %}
+            <tr>
+                <td>
+                    {% if obj.id == obj.max_id %}
+                    <a style="color: #8c64cf;" href="https://view.officeapps.live.com/op/view.aspx?src=https://{{request.get_host}}{{ obj.path}}" target="_blank">{{ obj.excel_path}}</a>
+                    {% else %}
+                    {{ obj.excel_path}}
+                    {% endif %}
+                </td>
+                <td>
+                    {{obj.remark|default:''}}
+                </td>
+                <td>
+                    <!--{% if obj.id == obj.max_id %}-->
+
+                    <!--{% else %}-->
+                    <!--已经重新上传-->
+                    <!--{% endif %}-->
+
+                    {% if obj.status == 0 %}
+                    未通过
+                    {% elif obj.status == 1 %}
+                    已通过
+                    {% else %}
+                    待审核
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="paginator"></div>
+</div>
+
+{% endblock %}
+{% block script %}
+    <script>
+
+    layui.use(['laypage', 'layer'], function(){
+        var laypage = layui.laypage,layer = layui.layer,laydate = layui.laydate;element = layui.element;
+        //完整功能
+        laypage.render({
+            elem: 'paginator',
+            curr:'{{ page }}',
+            limit:'{{ every_page_number }}',
+            count: '{{ count }}',
+            layout: ['count', 'prev','page', 'next',  'skip'],
+            jump: function(obj,first){
+                console.log(obj)
+                if(!first){
+                    //layer.msg('第 '+ obj.curr +' 页');
+                    window.location.href = '{{ request.path }}?page_type={{request.GET.page_type}}&page='+obj.curr;
+                }
+            }
+        });
+    });
+    </script>
+{% endblock %}

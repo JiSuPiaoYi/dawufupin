@@ -1,0 +1,172 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/bootstrap-iconpicker/bootstrap-iconpicker.min.css"/>
+
+    <style>
+    .layui-colla-title{
+        background-color: #ffffff;
+    }
+    .layui-colla-item .glyphicon{
+            color:#000;
+            width: 30px;
+        }
+    .layui-colla-item .list-group{
+        padding-left: 65px;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+
+<div class="col-sm-12" id="add-nav-block">
+    <table class="table">
+        <caption>
+
+            <!--面包屑导航开始-->
+            <ol class="breadcrumb offset-top-30" style="background-color: #ffffff;">当前位置：
+                <li><a href="{% url 'nav_list' %}">菜单管理</a></li>
+                 <li class="active">
+                     {% if request.GET.id %}编辑{% else %}添加{% endif %}
+                 </li>
+            </ol>
+            <!--面包屑导航结束-->
+        </caption>
+
+        <tbody>
+            <tr>
+                <td>
+                    <form class="form-horizontal layui-form" role="form">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">导航名称</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="name" value="{{ nav_info.name }}" placeholder="请输入" autocomplete="off" class="layui-input" lay-verify="name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">url</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="url" placeholder="若无，则填“#”" value="{{ nav_info.url|default:'#' }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">上级导航</label>
+                            <div class="col-sm-10">
+{#                                <select name="pid" lay-verify="pid">#}
+{#                                    <option value="0">请选上级导航</option>#}
+{#                                    {% for nav in top_navs %}#}
+{#                                        <option value="{{ nav.id }}" {% if nav_info.pid_id == nav.id %}selected{% endif %}>{{ nav.name }}</option>#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
+
+                                {% if nav_list %}
+                                <table class="tree table table-bordered">
+                                    <tbody>
+                                        {% for nav in nav_list %}
+                                            <tr class="treegrid-{{ nav.id }}{% if nav.pid_id %} treegrid-parent-{{ nav.pid_id }}{% endif %}">
+                                                <td style="width: 60px;">
+                                                    <input type="radio" name="pid" value="{{ nav.id }}" title="{{ nav.name }}" {% if nav_info.pid_id == nav.id %}checked{% endif %}>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                    无
+                                {% endif %}
+
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_show" class="col-sm-2 control-label">是否显示</label>
+                            <div class="col-sm-10">
+                                <input type="radio" name="is_show" value="1" title="是" {% if nav_info.is_show or nav_info.is_show == None %}checked{% endif %}>
+                                <input type="radio" name="is_show" value="0" title="否" {% if nav_info.is_show == False %}checked{% endif %}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_show" class="col-sm-2 control-label">排序</label>
+                            <div class="col-sm-10">
+                                <input type="number" name="sort" value="{{ nav_info.sort|default:50 }}" autocomplete="off" class="layui-input" lay-verify="sort">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="is_show" class="col-sm-2 control-label">图标</label>
+                            <div class="col-sm-10">
+                                <button name="icon" id="icon-target" type="button" class="btn btn-default" data-iconset="fontawesome" data-icon="{{ nav_info.icon }}" role="iconpicker" data-rows="5" data-cols="9" data-placement="right"></button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="button" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</div>
+{##}
+{#    <div class="layui-layer layui-layer-dialog layui-layer-border layui-layer-msg layer-anim layer-anim-close" id="layui-layer11" type="dialog" times="11" showtime="3000" contype="string" style="z-index: 19891025; top: 110.333px; left: 537.333px;"><div id="" class="layui-layer-content layui-layer-padding"><i class="layui-layer-ico layui-layer-ico5"></i>导航名称不能为空</div><span class="layui-layer-setwin"></span></div>#}
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{{ STATIC_URL }}source/bootstrap-iconpicker/bootstrap-iconpicker-iconset-all.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/bootstrap-iconpicker/bootstrap-iconpicker.min.js"></script>
+
+<script>
+    $('.tree').treegrid({
+        'initialState': 'expanded',
+
+    });
+
+    // Default options
+$('#icon-target').iconpicker();
+//Demo
+layui.use('form', function(){
+    var form = layui.form;
+    form.verify({
+        name: function(value, item){ //value：表单的值、item：表单的DOM对象
+            if($.trim(value) == ''){
+              return '导航名称不能为空';
+            }
+        },
+
+        //我们既支持上述函数式的方式，也支持下述数组的形式
+        //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+        pid: [
+            /[\d]+$/
+            ,'上级导航数据错误'
+        ],
+        sort: [
+            /[\d]+$/
+            ,'排序必须为数字'
+        ]
+    });
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+        var nav_id = "{{ request.GET.id }}";
+        var url;
+        if(nav_id=='' || nav_id==null){
+            url = "{% url 'add_nav' %}";
+        }else{
+            url = "{% url 'edit_nav' %}?id="+nav_id;
+        }
+        $.post(url,data.field,function(res){
+            if(res.code === "200"){
+                //layer.msg(res.message);
+                location.href = "{% url 'nav_list' %}"
+            }else{
+                layer.msg(res.message);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

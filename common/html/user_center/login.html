@@ -1,0 +1,142 @@
+{% extends "app_common/base.html" %}
+{% block title %}主页{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/login.css"/>
+    <style>
+        {#        .content .login .login_title{#}
+        {##}
+        {#        }#}
+        {#    .content .login .login_title{#}
+        {#    font-size:20px;#}
+        {#    text-align: center;#}
+        {#    padding-top:20px;#}
+        {#        padding-bottom: 20px;#}
+        {#    width:100%;#}
+
+/*created  on 2017/05/05*/
+    body{
+        background: url("/common/images/background.png") no-repeat;
+        background-size: 100% 100%;
+        opacity: 1;
+        background-color: rgba(0,0,0,0.6);
+    }
+
+    .login input{
+        color:#000000;
+    }
+
+    </style>
+{% endblock %}
+
+{% block header %}
+    <header id="header">
+            <div class="container">
+                <div class="top_center">
+                    <div class="logo" style="margin-left: -30px;"><img src="/common/images/logo.png"></div>
+                    <div class="head" style="cursor: pointer">
+{#                        <i class="fa fa-bank"></i>#}
+                         大悟县扶贫数据查询系统
+                    </div>
+                </div>
+            </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+    <!-- 主体部分 -->
+    <div class="content" id="vue-info">
+        <div class="content_center">
+            <div class="jianjie">
+扭住重点:精准扶贫、阳光扶贫、公正扶贫和廉洁扶贫 ，构建形成运行规范、监管严谨、充满活力的扶贫开发体制机制。
+            </div>
+            <div class="login" >
+
+                <form class="form-horizontal clearfix layui-form">
+                    <div class="login_title"></div>
+                    <div class="form-group has-feedback col-xs-12" >
+                        <div class="col-xs-1"></div>
+                        <label for="input1" class="col-sm-1 control-label label-title">
+                            <span class="glyphicon glyphicon-user" style="font-size:20px;color:#999"></span>
+                        </label>
+                        <div class="col-xs-10">
+                            <div>
+                                <input type="text" name="account" value="" autocomplete="off" class="layui-input" lay-verify="account">
+                                <span class="glyphicon form-control-feedback"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group has-feedback col-xs-12">
+                        <div class="col-xs-1"></div>
+                        <label for="input1" class="col-sm-1 control-label label-title">
+                            <span class="glyphicon glyphicon-lock" style="font-size:20px;color:#999"></span>
+                        </label>
+                        <div class="col-sm-10">
+                            <div>
+                                <input type="password" name="password" value="" autocomplete="off" class="layui-input" lay-verify="password">
+                                <span class="glyphicon form-control-feedback"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12" style="text-align: right;">  # 用户名：admin，密码：admin12345
+                        <span style="cursor: pointer;font-weight: 500;color:#0096ff;" onclick="location.href='/company_info/retrieve_password/';">忘记密码？</span>
+                    </div>
+
+                    <div class="form-group col-xs-12">
+                        <div class="col-xs-2"></div>
+                        <div class="col-xs-10">
+                            <button type="button" class="layui-btn col-xs-12" lay-submit lay-filter="loginForm">登录</button>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        //ajax post提交csrf验证
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' }
+        });
+
+        layui.use('form', function(){
+            var form = layui.form;
+            form.verify({
+                account: function(value, item){ //value：表单的值、item：表单的DOM对象
+                    if($.trim(value) == ''){
+                      return '账号不能为空';
+                    }
+                },
+                password: function(value, item){ //value：表单的值、item：表单的DOM对象
+                    if($.trim(value) == ''){
+                      return '密码不能为空';
+                    }
+                },
+            });
+            //监听提交
+            form.on('submit(loginForm)', function(data){
+                console.log(data.field)
+                $.post("{% url 'login_in' %}",data.field,function(res){
+                    if(res.code === "200"){
+                        //layer.msg(res.message);
+                        location.href = "{% url 'index' %}"
+                    }else{
+                        layer.msg(res.message);
+                    }
+                });
+            });
+        });
+
+     //回车提交事件
+    $("body").keydown(function(event) {
+      if (event.keyCode == "13") {//keyCode=13是回车键
+        $(".layui-btn").click();
+      }
+    });
+
+    </script>
+{% endblock %}

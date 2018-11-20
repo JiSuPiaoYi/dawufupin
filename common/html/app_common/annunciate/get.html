@@ -1,0 +1,112 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}通告发布{% endblock %}
+{% block css %}
+
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+
+    <table class="table">
+        <caption>
+            <h3>通告发布</h3>
+        </caption>
+        <tbody>
+            <tr>
+                <td>
+                    <form id="upload-form" class="layui-form" action="/app_common/annunciate/" method="post" enctype="multipart/form-data" style=" margin-top: 20px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ request.GET.id }}">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">标题</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="title" value="{{ data.title }}" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">内容</label>
+                            <div class="layui-input-block">
+                                <textarea placeholder="请输入内容" name="content" class="layui-textarea" rows="15"  lay-verify="content">{{ data.content }}</textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">附件</label>
+                            <div class="layui-input-block">
+
+                                <div class="layui-upload-drag" id="upload-attach">
+                                  <i class="layui-icon"></i>
+                                  <p>点击上传，或将文件拖拽到此处</p>
+                                </div>
+                                <span class="layui-inline layui-upload-choose">{{ attach_path }}</span>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                {% if request.GET.id == None %}
+                                <button class="layui-btn" name="form_type" value="add" lay-submit lay-filter="formDemo">立即提交</button>
+                                {% else %}
+                                <button class="layui-btn" name="form_type" value="edit" lay-submit lay-filter="formDemo">立即提交</button>
+                                {% endif %}
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+
+
+
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+        {% if message == 'add success' %}
+        layui.use('layer',function () {
+            var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+            //询问框
+            var index = layer.confirm('添加成功', {
+                btn: ['查看','继续添加'] //按钮
+            }, function(){
+                layer.close(index);
+                window.location.href = "{% url 'annunciate_info' %}?id={{ obj.id }}";
+            });
+        });
+        {% endif %}
+
+    layui.use('upload', function(){
+        var $ = layui.jquery,upload = layui.upload;
+        //拖拽上传
+        upload.render({
+            elem: '#upload-attach',
+            accept: 'file', //普通文件
+            auto: false,
+            exts:'xlsx|pdf|txt|ppt|zip|xls|doc|docx|pptx',
+            done: function(res){}
+        });
+    });
+
+    layui.use('form', function(){
+        var form = layui.form;
+        form.verify({
+            title: function(value, item){ //value：表单的值、item：表单的DOM对象
+                if($.trim(value) == ''){
+                  return '标题不能为空';
+                }
+            },
+            content: function(value, item){ //value：表单的值、item：表单的DOM对象
+                if($.trim(value) == ''){
+                  return '标题不能为空';
+                }
+            },
+        });
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            $("#upload-form").submit();
+        });
+    });
+    </script>
+{% endblock %}

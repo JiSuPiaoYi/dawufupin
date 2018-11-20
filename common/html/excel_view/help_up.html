@@ -1,0 +1,174 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}{{ page }}{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .layui-table td, .layui-table th, .layui-table-fixed-r, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row]{
+        border-color:#ffffff;
+    }
+    .layui-form-label{
+        width: auto;
+        padding: 9px 0 9px 10px;
+    }
+    .form-control{
+        border-radius: 2px;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>统计及报表</li>
+            <li class="active">{{ page }}</li>
+        </h3>
+    </div>
+    <table class="layui-table">
+        <caption>
+            <form action="{{ request.path }}" method="get">
+                <div class="col-xs-6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">乡镇名称</label>
+                        <div class="layui-input-block">
+                            <select class="form-control" name="town_name" onchange="get_village(this)">
+                                <option value="">请选择</option>
+                                {% for town_name in village_data %}
+                                    <option value="{{ town_name }}" {% if request.GET.town_name == town_name %}selected{% endif %}>{{ town_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">行政村名称</label>
+                        <div class="layui-input-block">
+                            <select class="form-control" name="now_village_identifier" required>
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-10">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">范围</label>
+                        <div class="layui-input-block">
+                            <div class="layui-input-inline">
+                                <input type="text" id="date-start" name="date_start" autocomplete="off" class="form-control">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline">
+                                <input type="text" id="date-end" name="date_end" autocomplete="off" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <button type="submit" class="layui-btn layui-btn-primary">点击查询</button>
+                </div>
+            </form>
+        </caption>
+        <caption>
+            合计数量：{{sum_data_sum.policy_multiplier|floatformat:2}}，合计应享：{{sum_data_sum.plan_money|floatformat:2}}元，合计实享：{{sum_data_sum.fact_money|floatformat:2}}元
+        </caption>
+        <colgroup>
+{#            <col width="150">#}
+        </colgroup>
+        <thead>
+            <tr>
+                <th>子项目</th>
+                <th>政策标准</th>
+                <th>数量</th>
+                <th>应享金额(元)</th>
+                <th>实享金额(元)</th>
+                <th>详情</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for policy in data %}
+            <tr>
+                <td>
+                    {{ policy.policy_second_layer }}{% if policy.policy_third_layer %}.{{ policy.policy_third_layer }}{% endif %}
+                </td>
+                <td>{{ policy.subsidy_standard|default:policy.subsidy_one }}</td>
+                <td>{{ policy.sum_data.0 }}</td>
+                <td>{{ policy.sum_data.1 }}</td>
+                <td>{{ policy.sum_data.2 }}</td>
+                <td>
+                    {% if policy.id == 32 %}
+                        <a class="layui-btn layui-btn-xs" href="/health_data/four_one/?policy_id={{ policy.id }}">查看</a>
+                    {% else %}
+                        <a class="layui-btn layui-btn-xs" href="/excel_view/help_up_detail/?policy_id={{ policy.id }}">查看</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+    var village_data = JSON.parse('{{ village_data_str|safe }}');
+    console.log(village_data);
+
+    function get_village(self) {
+        var town_name = $(self).val();console.log(town_name);
+        var village_list = village_data[town_name];
+        var html = '<option value="">请选择</option>';
+        $.each(village_list,function (key,value) {
+            html += '<option value="'+key+'">'+value+'</option>';
+        });
+        $("select[name='now_village_identifier']").html(html);
+    }
+
+    $(function () {
+        get_village($("select[name='town_name']"));
+        console.log($("select[name='now_village_identifier']>option"))
+        $.each($("select[name='now_village_identifier']>option"),function (key,value) {
+            if($(value).attr('value') === '{{ request.GET.now_village_identifier }}'){
+                $("select[name='now_village_identifier']").val('{{ request.GET.now_village_identifier }}');
+            }
+        });
+    });
+
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#date-start', //指定元素
+            type: 'month',
+            format:'yyyy-MM',
+            value:'{{ request.GET.date_start }}'
+        });
+        laydate.render({
+            elem: '#date-end', //指定元素
+            type: 'month',
+            format:'yyyy-MM',
+            value:'{{ request.GET.date_end }}'
+        });
+    });
+
+    // layui.use('form', function(){
+    //     var form = layui.form;
+
+    //     form.on('select(town_name)', function(data){
+    //         console.log(data);
+    //         var town_name = data.value;
+    //         var village_list = village_data[town_name];
+    //         var html = '';
+    //         var dd_html = '<dd lay-value="" class="layui-select-tips">请选择</dd>';
+    //         village_list.forEach(function (value) {
+    //             html += '<option value="'+value+'">'+value+'</option>';
+    //             dd_html += '<dd lay-value="'+value+'" class="">'+value+'</dd>'
+    //         });
+    //         $("select[name='now_administrative_village']").append(html);
+    //         $(".layui-anim-upbit").append(dd_html);
+
+    //     });
+    // })
+    </script>
+{% endblock %}

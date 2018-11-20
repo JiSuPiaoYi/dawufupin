@@ -1,0 +1,125 @@
+@charset "utf-8";
+*{margin:0;padding: 0;}/*解决浏览器不兼容问题*/
+ul,li{list-style:none;}
+a{text-decoration: none;}
+a img{display: block;border: none;}
+body{background: #fff; font-family: "microsoft yahei";}
+/*header start*/
+header {
+    height: 80px;
+    /*background: #fff;*/
+    width: 100%;
+    overflow: hidden;
+    border-top: 5px solid #5cb85c;
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.top_center{
+    height: 80px;
+    margin: auto;
+}
+
+.top_center .logo {
+    /*width: 100px;*/
+    height: 80px;
+    float: left;
+    line-height: 80px;
+}
+
+.top_center .company a:hover{
+    color: #505050;
+}
+
+.top_center .head{
+    float: left;
+    line-height: 80px;
+    font-size: 25px;
+    color:#505050;
+    margin-left: 20px;
+    font-weight:100;
+}
+
+.top_center .company {
+    font-size: 16px;
+    height: 100%;
+    line-height: 80px;
+    margin-left: 200px;
+    float: left;
+}
+
+.top_center .company a{
+    color: #ccc;
+    text-decoration: none;
+    font-weight:100;
+}
+
+header .user_login {
+    height: 100%;
+    line-height: 80px;
+    font-size: 14px;
+    float: right;
+}
+
+header .user_login a{
+    color: #000;
+    text-decoration: none;
+}
+header .user_login a:hover{
+    color: #142728;
+}
+    /*end header*/
+
+/*footer strat*/
+footer{
+    width: 100%;
+    height: 190px;
+    opacity: 1;
+    background-color: rgba(0,0,0,0.2);
+    /*background: #b8b9b9;*/
+}
+
+footer .footer_center {
+    height: 100%;
+    margin: auto;
+    overflow: hidden;
+}
+footer .footer_center>ul {
+    float: left;
+    color: #fff;
+    margin: 20px auto;
+    height: 150px;
+    box-sizing: border-box;
+}
+.footer-ul-img {
+    text-align: center;
+    border-right: 1px solid white;
+    width: 20%;
+}
+footer .footer_center ul li a{
+    color: #fff;
+}
+
+footer .footer_center>ul li:first-child {
+    font-size: 20px;
+}
+
+footer .footer_center>ul li:first-child a{
+    font-weight:200;
+}
+
+footer .footer_center>ul li:last-child {
+    padding-top:10px;
+}
+
+footer .footer_center>ul li {
+    padding-top: 15px;
+    font-size: 14px;
+    list-style: none;
+}
+
+footer .footer_center>ul li a{
+    font-weight: 100;
+}
+    /*end footer*/
+

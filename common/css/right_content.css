@@ -1,0 +1,11 @@
+.content{
+    background: #f6f8f9;
+    margin: 0 auto;
+    padding: 36px 0 88px;
+}
+.content_center{
+    height:100%;
+    padding:20px;
+    margin:auto;
+    /*background:white;*/
+}

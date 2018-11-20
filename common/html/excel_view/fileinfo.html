@@ -1,0 +1,69 @@
+{% extends "app_common/base.html" %}
+{% block title %}管理主页{% endblock %}
+
+{% block content %}
+<div class="clearfix">
+    <div class="col-xs-12">
+        <table class="table table-bordered" style="margin-top: 20px;">
+            <caption>
+
+                <ol class="breadcrumb offset-top-30" style="background-color: #ffffff;">
+                    <li><a href="/excel_view/index/?id={{ request.GET.id }}">{{ department_info.name }}</a></li>
+                    {% for v,i in ol_path_list %}
+                        {% if forloop.last %}
+                            <li class="active">{{ v }}</li>
+                            {% else %}
+                            <li><a href="/excel_view/index/{{ i }}?id={{ request.GET.id }}">{{ v }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+                <a href="{{ download_url }}" class="layui-btn">下载<i class="glyphicon glyphicon-download-alt"></i></a>
+                {% if is_approve != True %}
+                    <button class="layui-btn layui-btn-danger" onclick="del_file('{{dirpath}}','{{request.GET.id}}')">删除<i class="layui-icon"></i></button>
+                {% endif %}
+            </caption>
+            <tbody id="file-result">
+                <tr style="border: 1px solid #d1cece;">
+                    <td style="border:none;">
+                        {% if is_can_open == '1' %}
+                            <iframe style="width: 100%;height: 600px;" src="{{ file_path }}" frameborder="0"></iframe>
+                        {% elif is_can_open == '2' %}
+                            <p style="padding:20px;white-space: pre-wrap;word-wrap: break-word;word-break: break-all;">{{ file_content }}</p>
+{#                            <textarea name="" class="form-control" id="" cols="30" rows="20">{{ file_content }}</textarea>#}
+                        {% elif is_can_open == '3' %}
+{#                            <iframe style="width: 100%;height: 600px;" src="{{ file_content }}" frameborder="0"></iframe>#}
+                            <iframe style="width: 100%;height: 600px;" src="https://view.officeapps.live.com/op/view.aspx?src=https://{{request.get_host}}{{ download_url }}" frameborder="0"></iframe>
+                        {% elif is_can_open == '0' %}
+                            <div class="jumbotron" style="margin-bottom: 0;">
+                                <p style="text-align: center;">文件无法在线预览，请下载到本地查看！</p>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+<script>
+    function del_file(path,id) {
+        layui.use('layer', function(){
+            layer.confirm('确定删除么？', function(index){
+                $.post("{% url 'file_del' %}",{
+                    "dirpath":path,
+                    "id":id
+                },function (res) {
+                    if(res.code === '200'){
+
+                        window.location.href = "/excel_view/index/"+res.data.curr_request_dir+"?id={{ request.GET.id }}";
+                    }
+                });
+                layer.close(index);
+
+            });
+        });
+    }
+</script>
+{% endblock %}

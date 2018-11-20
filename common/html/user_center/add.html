@@ -1,0 +1,126 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/bootstrap-iconpicker/bootstrap-iconpicker.min.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block right_content %}
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li><a href="{% url 'user_list' %}">账号管理</a></li>
+            <li class="active">{% if request.GET.id %}编辑{% else %}添加{% endif %}</li>
+        </h3>
+    </div>
+
+    <div class="col-sm-12">
+
+        <table class="table">
+            <caption>
+
+            </caption>
+            <tbody>
+                <tr>
+                    <td style="border-top: none;">
+                        <form class="form-horizontal layui-form" role="form">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">姓名</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="name" value="{{ info.name }}" placeholder="请输入姓名" autocomplete="off" class="layui-input" lay-verify="required">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">手机号</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="mobile" value="{{ info.mobile }}" placeholder="请输入手机号" autocomplete="off" class="layui-input" lay-verify="required|phone">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">密码</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="password" value="" {% if info.about.password %}placeholder="密码为空表示不修改密码"{% else %}lay-verify="password"{% endif %} autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">所属部门</label>
+                                <div class="col-sm-10">
+                                    {% if department_list %}
+                                    <table class="tree table table-bordered">
+                                        <tbody>
+                                            {% for department in department_list %}
+                                                <tr class="treegrid-{{ department.id }}{% if department.pid_id %} treegrid-parent-{{ department.pid_id }}{% endif %}">
+                                                    <td style="width: 60px;">
+                                                        <input type="radio" name="department_id" value="{{ department.id }}" title="{{ department.name }}" {% if info.department_id == department.id %}checked{% endif %} lay-verify="required">
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {% else %}
+                                        无
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('.tree').treegrid({
+        'initialState': 'expanded',
+
+    });
+
+layui.use('form', function(){
+    var form = layui.form;
+    form.verify({
+        name: function(value, item){ //value：表单的值、item：表单的DOM对象
+            if($.trim(value) == ''){
+              return '姓名不能为空';
+            }
+        },
+        password: [/(.+){6,12}$/, '密码必须6到12位'],
+        mobile: [/(\d){11}$/,'手机号格式不正确']
+    });
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+        var mobile = "{{ request.GET.mobile }}";
+        var about_id = "{{ request.GET.about_id }}";
+        var url;
+        if(mobile=='' || mobile==null){
+            url = "{% url 'user_add' %}";
+        }else{
+            url = "{% url 'user_edit' %}?mobile="+mobile+"&about_id="+about_id;
+        }
+
+        $.post(url,data.field,function(res){
+            if(res.code === "200"){
+                //layer.msg(res.message);
+                location.href = "{% url 'user_list' %}"
+            }else{
+                layer.msg(res.message);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

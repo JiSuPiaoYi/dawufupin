@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+
+        <link rel="stylesheet" href="{{ STATIC_URL }}source/bootstrap/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="{{ STATIC_URL }}source/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css"/>
+        <link rel="stylesheet" href="{{ STATIC_URL }}source/layui/css/layui.css"/>
+        <link rel="stylesheet" href="{{ STATIC_URL }}source/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/common.css"/>
+        <link rel="stylesheet" href="{{ STATIC_URL }}source/bootstrap-select-1.12.4/dist/css/bootstrap-select.min.css"/>
+
+        <script src="{{ STATIC_URL }}source/jquery/jquery-3.1.1.min.js"></script>
+        <script src="{{ STATIC_URL }}source/bootstrap/js/bootstrap.min.js"></script>
+        <script src="{{ STATIC_URL }}source/layui/layui.js"></script>
+        <script src="{{ STATIC_URL }}source/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+        <script src="{{ STATIC_URL }}source/bootstrap-select-1.12.4/dist/js/bootstrap-select.min.js"></script>
+
+        {% block style %}{% endblock %}
+    </head>
+
+    {% block css %}{% endblock %}
+
+    <body>
+    {% block header %}
+        <!--header strat-->
+        <header id="header">
+            <div class="container">
+                <div class="top_center">
+                    <div class="logo">
+                        <a href="/"><img src="/common/images/logo.png"></a>
+                    </div>
+                    <div class="head" style="cursor: pointer">
+{#                        <i class="fa fa-bank"></i>#}
+                        大悟县扶贫数据查询系统
+                    </div>
+                    <div class="user_login">
+                        <span class="span1">
+                            <a href="#">
+                                {% if USERINFO.name %}
+                                    {{ USERINFO.name }}
+                                {% else %}
+                                    {{ request.user.username }}
+                                {% endif %}
+                            </a>
+                        </span>
+                        <a class="span2" style="color:red;cursor: pointer" href="{% url 'login_out' %}">退出</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!--end header-->
+    {% endblock %}
+
+    {% block content %}
+        内容部分
+    {% endblock %}
+        页脚部分
+    {% block footer %}
+        <!--footer strat-->
+{#        <div class="footLineGray" style="clear: both;width: 100%;border-top: 1px solid #b8b8b8;line-height: 0;height: 0;font-size: 0;"></div>#}
+{#        <div class="lineWhite" style="clear: both;width: 100%;border-top: 1px solid #fff;line-height: 0;height: 0;font-size: 0;"></div>#}
+        <footer id="footer" class="clearfix">
+            <div class="container">
+                <div class="footer_center">
+
+
+
+                    <ul class="footer-ul-img">
+                        <li><img src="http://www.hbdawu.gov.cn/dwWeb/static/images/wb.png" alt=""></li>
+                    </ul>
+{#                    <ul class="footer-ul-img" style="border:none;margin-left: 20px;margin-right: 20px;">#}
+{#                        <li><img src="http://dcs.conac.cn/image/red.png" alt=""></li>#}
+{#                        <li><img src="http://121.43.68.40/exposure/images/jiucuo.png?v=4209220002" alt=""></li>#}
+{#                    </ul>#}
+                    <ul style="border:none;margin-left: 20px;">
+                        <li><a href="#">主办单位：大悟县人民政府</a></li>
+                        <li><a href="#">联系电话：0712-7226762</a></li>
+                        <li>投稿邮箱：hbdawu_gov_cn@163.com</li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'help_list' %}">帮助中心</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </footer>
+        <!--end footer-->
+    {% endblock %}
+
+    <script src="{{ STATIC_URL }}source/vue/vue.min.js"></script>
+    <script>
+        //csrf安全验证，设置全局参数，后面所有ajax提交，都会携带下面设置的参数
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+
+
+    </script>
+
+    {% block script %}{% endblock %}
+    </body>
+</html>

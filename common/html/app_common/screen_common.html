@@ -1,0 +1,30 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}历史数据{% endblock %}
+{% block css %}
+<style>
+
+</style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>统计及报表</li>
+            <li class="active">扶贫数据概况</li>
+
+            <a href="{% url 'screen' %}?screen=1" style="float:right;">切换大屏</a>
+        </h3>
+
+    </div>
+    <div id="test">
+         <iframe id="common-iframe" src="{% url 'screen' %}" frameborder="0" width="100%" height='2500' scrolling="yes"></iframe>
+    </div>
+
+</div>
+{% endblock %}
+{% block script %}
+<script>
+
+
+</script>
+{% endblock %}

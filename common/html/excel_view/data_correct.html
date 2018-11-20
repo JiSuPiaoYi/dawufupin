@@ -1,0 +1,196 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}数据修正{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
+        border-top: none;
+    }
+    .layui-table td, .layui-table th, .layui-table-fixed-r, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row]{
+        border-color:#ffffff;
+    }
+    .layui-form .layui-form-label{
+        width: auto;
+    }
+    .out-div{
+        border: 1px solid #dadada;
+        color: #838383;
+        font-size: 12px;
+        margin-top: 10px;
+        background-color: #FFF;
+    }
+    .in-div{
+        margin: 20px;
+        border: 3px dashed #e6e6e6;
+        min-height: 238px;
+        text-align: center;
+        /* background: url(../images/xlsx.jpg) center 93px no-repeat; */
+        background-size: 88px 75px;
+        color: #cccccc;
+        font-size: 18px;
+    }
+    .layui-form-label{
+        width: auto;
+        padding: 9px 0 9px 10px;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>扶贫办</li>
+            {% if result == '1' %}
+                <li>
+                    {% if request.GET.type == 'village' %}
+                        贫困村
+                    {% elif request.GET.type == 'family' %}
+                        贫困户
+                    {% elif request.GET.type == 'man' %}
+                        贫困人口
+                    {% elif request.GET.type == 'helper' %}
+                        帮扶人员
+                    {% endif %}
+                </li>
+                <li class="active">添加</li>
+            {% else %}
+                <li class="active">基础数据修正</li>
+            {% endif %}
+        </h3>
+        {% if result != '1' and request.GET.type !=  None %}
+        <div style="text-align: right;">
+            <a class="layui-btn" href="{% url 'data_correct_add' %}?type={{ request.GET.type }}">添加</a>
+        </div>
+        {% endif %}
+    </div>
+    <table class="table">
+        {% if result != '1' %}
+        <caption style="margin-bottom: 30px;">
+            <form id="form-search" class="layui-form" lay-filter="formSearch" action="{% url 'search_correct' %}" method="get">
+                <div class="col-xs-5">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="margin-left: 0;">
+                            <input type="radio" name="type" lay-filter="type" value="village" title="村" {% if request.GET.type == 'village' %}checked{% endif %} checked>
+                            <input type="radio" name="type" lay-filter="type" value="family" title="户" {% if request.GET.type == 'family' %}checked{% endif %}>
+                            <input type="radio" name="type" lay-filter="type" value="man" title="人" {% if request.GET.type == 'man' %}checked{% endif %}>
+                            <input type="radio" name="type" lay-filter="type" value="helper" title="帮扶人" {% if request.GET.type == 'helper' %}checked{% endif %}>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-5">
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="margin-left:0;">
+                            <input type="text" name="number" value="{{ request.GET.number }}"  lay-verify="required" placeholder="请输入村编号" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <button class="layui-btn" type="button" lay-submit lay-filter="form_search">搜索</button>
+                </div>
+            </form>
+        </caption>
+        {% endif %}
+
+        <tbody>
+            <tr>
+                <td style="border-top: none;">
+                    {% block search %}
+                    <div class="out-div">
+                        <div class="in-div">
+                            <h2 style="margin-top: 100px;">
+                                搜索数据，可直接编辑，或者
+                                <a href="javascript:;" onclick="data_add()">新增数据</a>
+                            </h2>
+                        </div>
+                    </div>
+                    {% endblock %}
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+    layui.use(['form','layer'], function(){
+        var form = layui.form;
+        var layer = layui.layer;
+
+        form.on('radio(type)', function(data){
+          console.log(data);
+          var value = data.value;
+          var placeholder;
+          if(value === 'village'){
+              placeholder = '请输入村编号';
+          }else if(value === 'family'){
+              placeholder = '请输入户主身份证号'
+          }else if(value === 'man'){
+              placeholder = '请输入人员身份证号'
+          }else if(value === 'helper'){
+              placeholder = '请输入帮扶人手机号'
+          }
+          if(value == '{{ request.GET.type }}'){
+              $("input[name='number']").val('{{ request.GET.number }}');
+          }else{
+              $("input[name='number']").val('');
+          }
+          $("input[name='number']").attr('placeholder',placeholder);
+        });
+        //监听提交
+        form.on('submit(form_search)', function(data){
+            $("#form-search").submit();
+        });
+        form.on('submit(form_save)', function(data){
+            var url;
+            {% if result == '1' %}
+                url = "{% url 'data_correct_add' %}";
+            {% else %}
+                url = "{% url 'search_correct' %}";
+            {% endif %}
+            $.post(url, data.field, function (jsondata) {
+                layer.msg(jsondata.message);
+            });
+        });
+    });
+    function data_add() {
+        layui.use('layer', function() { //独立版的layer无需执行这一句
+            var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+
+            layer.open({
+                type: 1,
+                content: '<div style="padding: 20px 0;text-align:center;font-size:22px;">添加的数据类型？</div>',
+                btn: ['贫困村', '贫困户', '贫困人口','帮扶人'], //可以无限个按钮,
+                maxWidth :500,
+                btnAlign: 'c', //按钮居中,
+                shade: 0, //不显示遮罩
+                yes: function(index, layero){
+                    //按钮【贫困村】的回调
+                    window.location.href = '{% url 'data_correct_add' %}?type=village';
+                },
+                btn2: function(index, layero){
+                    //按钮【贫困户】的回调
+                    window.location.href = '{% url 'data_correct_add' %}?type=family';
+                    return false //开启该代码可禁止点击该按钮关闭
+                },
+                btn3: function(index, layero){
+                //按钮【贫困人口】的回调
+                    window.location.href = '{% url 'data_correct_add' %}?type=man';
+                    return false //开启该代码可禁止点击该按钮关闭
+                },
+                btn4: function(index, layero){
+                //按钮【帮扶人】的回调
+                    window.location.href = '{% url 'data_correct_add' %}?type=helper';
+                    return false //开启该代码可禁止点击该按钮关闭
+                },
+                cancel: function(){
+                //右上角关闭回调
+
+                }
+            });
+        })
+    }
+    </script>
+{% endblock %}

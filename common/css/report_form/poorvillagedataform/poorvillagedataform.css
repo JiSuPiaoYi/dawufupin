@@ -1,0 +1,416 @@
+@charset "utf-8";
+
+.up{
+    height:50px;
+    font-size:18px;
+    text-align:center;
+}
+
+.middle{
+    border:solid 1px #f0f0f0;
+    padding:15px 15px 0 15px;
+}
+
+.middle .query_part{
+    font-size:14px;
+    border-bottom:solid 1px #f0f0f0;
+    padding-bottom:5px;
+}
+
+.middle .show_part{
+    font-size:14px;
+}
+
+.middle .show_part .div01{
+    height:30px;
+    margin-top:15px;
+}
+
+.middle .show_part .div01 .town_tag{
+    float:left;
+    height:30px;
+    line-height:30px;
+}
+
+.middle .show_part .div01 .town_part{
+    float:left;
+    height:30px;
+    width:280px;
+}
+
+.middle .show_part .div01 .town_part select{
+    width:100%;
+    height:100%;
+    color:#555;
+    border-radius:4px;
+    border:solid 1px #ccc;
+    -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);
+}
+
+.middle .show_part .div01 .definition_tag{
+    float:left;
+    height:30px;
+    line-height:30px;
+    margin-left:55px;
+}
+
+.middle .show_part .div01 .definition_part{
+    float:left;
+    height:30px;
+    width:280px;
+}
+
+.middle .show_part .div01 .definition_part select{
+    width:100%;
+    height:100%;
+    color:#555;
+    border-radius:4px;
+    border:solid 1px #ccc;
+    -webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);
+}
+
+.middle .show_part .div02{
+    height:45px;
+    padding-bottom:15px;
+    border-bottom:solid 1px #f0f0f0;
+}
+
+.middle .show_part .div02 .responser_tag{
+    float:left;
+    height:30px;
+    line-height:30px;
+}
+
+.middle .show_part .div02 .responser_input{
+    float:left;
+    width:277px;
+    height:30px;
+}
+
+.middle .show_part .div02 .telephone_tag{
+    float:left;
+    height:30px;
+    line-height:30px;
+    margin-left:55px;
+}
+
+.middle .show_part .div02 .telephone_input{
+    float:left;
+    width:280px;
+    height:30px;
+}
+
+.middle .show_part .div03{
+    margin-top:10px;
+    padding-right:3px;
+    height:30px;
+    margin-bottom:10px;
+}
+
+.middle .show_part .div03 button{
+    width:100px;
+    float:right;
+    margin-left:50px;
+}
+
+.down{
+    margin-top:30px;
+    padding:15px 15px 0 15px;
+    border:solid 1px #f0f0f0;
+}
+
+.down .list_part{
+    height:25px;
+    font-size:14px;
+    border-bottom:solid 1px #f0f0f0;
+    padding-bottom:5px;
+}
+
+.down .list_part .p01{
+    float:left;
+}
+
+.down .list_part .p02{
+    float:right;
+}
+
+.down .specific_part{
+    padding-top:20px;
+}
+
+.down .specific_part .info_part{
+    border-color:#f6f8f9;
+}
+
+.down .specific_part .info_part .heading_part{
+    height:30px;
+    padding:0 0;
+    background-color:#f6f8f9;
+    border-color:#f6f8f9;
+}
+
+.down .specific_part .info_part .heading_part .down_span{
+    display:none;
+    float:left;
+    width:30px;
+    height:30px;
+    padding-top:6px;
+    padding-left:6px;
+    cursor:pointer;
+}
+
+.down .specific_part .info_part .heading_part .right_span{
+    display:block;
+    float:left;
+    width:30px;
+    height:30px;
+    padding-top:6px;
+    padding-left:6px;
+    cursor:pointer;
+}
+
+.down .specific_part .info_part .heading_part .village_span{
+    display:block;
+    float:left;
+    height:30px;
+    width:130px;
+    padding-top:5px;
+    margin-right:10px;
+}
+
+.down .specific_part .info_part .heading_part .responser_span{
+    display:block;
+    float:left;
+    height:30px;
+    width:150px;
+    padding-top:5px;
+    margin-right:10px;
+}
+
+.down .specific_part .info_part .heading_part .home_span{
+    display:block;
+    float:left;
+    height:30px;
+    width:205px;
+    padding-top:5px;
+    margin-right:10px;
+}
+
+.down .specific_part .info_part .heading_part .people_span{
+    display:block;
+    float:left;
+    height:30px;
+    width:240px;
+    padding-top:5px;
+    margin-right:10px;
+}
+
+.down .specific_part .info_part .heading_part .layui_span{
+    height:20px;
+    width:20px;
+    margin-top:7px;
+    cursor:pointer;
+}
+
+.down .specific_part .info_part .first_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .first_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .second_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .second_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .third_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .third_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .fourth_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .fourth_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .fifth_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .fifth_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .sixth_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .sixth_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .seventh_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .seventh_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .eighth_layer{
+    height:30px;
+}
+
+.down .specific_part .info_part .eighth_layer p{
+    float:left;
+    width:262px;
+    height:30px;
+    line-height:30px;
+}
+
+.down .specific_part .info_part .nineth_layer{
+    margin-top:10px;
+    text-align:center;
+    vertical-align:middle;
+}
+
+.down .specific_part .info_part .nineth_layer table{
+    margin-bottom:0;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_1{
+    width:180px;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_1 .td_1_span{
+    display:block;
+    max-width:160px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    cursor:pointer;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_2{
+    width:170px;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_2 .td_2_span{
+    display:block;
+    max-width:150px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    cursor:pointer;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_3{
+    width:50px;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_4{
+    width:120px;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_5{
+    width:120px;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_6{
+    width:80px;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_7{
+    width:80px;
+}
+
+.down .specific_part .info_part .nineth_layer table tbody .td_7 .td_7_span{
+    cursor:pointer;
+    display:block;
+}
+
+.down .paging{
+    height:50px;
+    padding-top:10px;
+    padding-bottom:10px;
+    border-top:solid 1px #f0f0f0;
+}
+
+.down .paging .paging_edit{
+    float:right;
+    height:100%;
+}
+
+.down .paging .paging_edit span{
+    display:block;
+    float:right;
+    height:25px;
+    width:40px;
+    border:solid 1px;
+    text-align:center;
+    border-radius:5px;
+    cursor:pointer;
+    padding-top:2px;
+}
+
+.down .paging .paging_edit input{
+    float:right;
+    height:25px;
+    width:60px;
+    text-align:center;
+    margin-right:8px;
+    border-radius:5px;
+    margin-top:1px;
+}
+
+.down .paging .paging_mark{
+    float:right;
+    height:100%;
+    margin-right:15px;
+    padding-top:3px;
+}
+
+.down .paging .paging_mark span{
+    cursor:pointer;
+}
+
+
+.down .nodata_part{
+   padding-top:15px;
+   padding-bottom:15px;
+   text-align:center;
+}

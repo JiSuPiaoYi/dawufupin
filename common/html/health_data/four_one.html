@@ -1,0 +1,222 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}详情{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .layui-table td, .layui-table th, .layui-table-fixed-r, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row]{
+        border-color:#ffffff;
+    }
+    .layui-form-label{
+        width: auto;
+        padding: 9px 0 9px 10px;
+    }
+    .form-control{
+        border-radius: 2px;
+    }
+    #paginator{
+        margin-top:30px;
+        text-align: center;
+        border-top: 1px solid #eee;
+    }
+    .layui-colla-title{
+        cursor: inherit;
+        background-color:#f6f8f9;
+    }
+    .layui-collapse{
+        border: none;
+    }
+    .layui-colla-item{
+        margin-top: 20px;
+        border: 1px solid #e6e6e6;
+    }
+    .layui-colla-item:first-child{
+        margin-top: 0;
+    }
+    .layui-icon{
+        cursor: pointer;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>{{ policy_obj.policy_first_layer }}汇总</li>
+            <li>{{ policy_obj.policy_second_layer }}</li>
+            {% if policy_obj.policy_third_layer %}
+                <li class="active">{{ policy_obj.policy_third_layer }}（{{ policy_obj.subsidy_one }}）</li>
+            {% else %}
+                <li class="active">（{{ policy_obj.subsidy_one }}）</li>
+            {% endif %}
+        </h3>
+    </div>
+    <table class="table">
+        <caption>
+            <form action="{{ request.path }}" method="get">
+                <div class="col-xs-12">
+                    <input type="hidden" name="policy_id" value="{{ request.GET.policy_id }}">
+                </div>
+{#                <div class="col-xs-6">#}
+{#                    <div class="layui-form-item">#}
+{#                        <label class="layui-form-label">乡镇名称</label>#}
+{#                        <div class="layui-input-block">#}
+{#                            <select class="form-control" name="town_name" onchange="get_village(this)">#}
+{#                                <option value="">请选择</option>#}
+{#                                {% for town_name in village_data %}#}
+{#                                    <option value="{{ town_name }}">{{ town_name }}</option>#}
+{#                                {% endfor %}#}
+{#                            </select>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="col-xs-6">#}
+{#                    <div class="layui-form-item">#}
+{#                        <label class="layui-form-label">行政村名称</label>#}
+{#                        <div class="layui-input-block">#}
+{#                            <select class="form-control" name="now_village_identifier">#}
+{#                                <option value="">请选择</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+                <div class="col-xs-10">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            个人身份证号
+                        </label>
+                        <div class="layui-input-block">
+                            <input class="form-control" type="text" name="people_id" value="{{ request.GET.people_id }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-2">
+                    <button type="submit" class="layui-btn layui-btn-primary">点击查询</button>
+                </div>
+            </form>
+        </caption>
+        <tbody>
+            <tr>
+                <td style="border-top: none;">
+                    <div class="layui-collapse" lay-accordion>
+                        {% for detail in data %}
+                        <div class="layui-colla-item">
+                            <h2 class="layui-colla-title">
+                                <div class="col-xs-2">{{ detail.people_name }}</div>
+                                <div class="col-xs-3">
+                                    <a href="/report_form/poorpeopledataform/?people_id={{ detail.people_id }}">{{ detail.people_id }}</a>
+                                </div>
+                                <div class="col-xs-4">{{ detail.institution_name }}</div>
+                                <div class="col-xs-3">{{ detail.medical_type }}</div>
+                                <i class="layui-icon layui-colla-icon" onclick="target_content(this)"></i>
+                                <i class="layui-icon layui-colla-icon" onclick="target_content(this)" style="display: none;"></i>
+                            </h2>
+                            <div class="layui-colla-content">
+                                <table class="layui-table" lay-size="sm" style="margin: 0;">
+                                    <tbody>
+                                        <tr>
+                                            <td>兜底属性：{{ detail.bottom_property }}</td>
+                                            <td colspan="2">住址：{{ detail.people_address }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>就医机构：{{ detail.institution_name }}</td>
+                                            <td>就医类型：{{ detail.medical_type }}</td>
+                                            <td>疾病：{{ detail.people_diagnosis }}元</td>
+                                        </tr>
+                                        <tr>
+                                            <td>入院日期：{{ detail.in_time }}</td>
+                                            <td>出院日期：{{ detail.off_time }}</td>
+                                            <td>医疗费总额：{{ detail.medical_amount }}元</td>
+                                        </tr>
+                                        <tr>
+                                            <td>纳入补偿：{{ detail.inclusion_compensation }}元</td>
+                                            <td>统筹支付合计：{{ detail.overall_payment }}元</td>
+                                            <td>医保补偿：{{ detail.medical_compensation }}元</td>
+                                        </tr>
+                                        <tr>
+                                            <td>大病保险：{{ detail.insurance_indemnity }}元</td>
+                                            <td>民政救助：{{ detail.civil_rescue }}元</td>
+                                            <td>补充保险：{{ detail.supplement_indemnity }}元</td>
+                                        </tr>
+                                        <tr>
+                                            <td>患者自付：{{ detail.people_payment }}元</td>
+                                            <td>结算日期：{{ detail.settlement_date }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="paginator"></div>
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+    var village_data = JSON.parse('{{ village_data_str|safe }}');
+    console.log(village_data);
+
+    function get_village(self) {
+        var town_name = $(self).val();console.log(town_name);
+        var village_list = village_data[town_name];
+        var html = '<option value="">请选择</option>';
+        $.each(village_list,function (key,value) {
+            html += '<option value="'+key+'">'+value+'</option>';
+        });
+        $("select[name='now_village_identifier']").html(html);
+    }
+
+    function target_content(self) {
+        var content_eleme = $(self).parents('.layui-colla-item').find('.layui-colla-content');
+        var now_is_show = content_eleme.eq(0).hasClass('layui-show');
+        if(now_is_show){
+            $(".layui-colla-content").removeClass('layui-show');
+            $(self).parent().find('.layui-icon').eq(0).show();
+            $(self).parent().find('.layui-icon').eq(1).hide();
+        }else{
+            $(".layui-colla-content").removeClass('layui-show');
+            content_eleme.addClass('layui-show');
+            $(self).parent().find('.layui-icon').eq(0).hide();
+            $(self).parent().find('.layui-icon').eq(1).show();
+        }
+    }
+
+    layui.use(['laypage', 'layer','laydate'], function(){
+        var laypage = layui.laypage,layer = layui.layer,laydate = layui.laydate;element = layui.element;
+        //完整功能
+        laypage.render({
+            elem: 'paginator',
+            curr:'{{ page }}',
+            limit:'{{ every_page_number }}',
+            count: '{{ count }}',
+            layout: ['count', 'prev','page', 'next',  'skip'],
+            jump: function(obj,first){
+                console.log(obj)
+                if(!first){
+                    //layer.msg('第 '+ obj.curr +' 页');
+                    window.location.href = '{{ request.path }}?policy_id={{ policy_id }}&town_name={{ request.GET.town_name }}&now_village_identifier={{ request.GET.now_village_identifier }}&people_id={{ request.GET.people_id }}&page='+obj.curr;
+                }
+            }
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#date-start', //指定元素
+            type: 'month',
+            format:'yyyy-MM',
+            value:'{{ request.GET.date_start }}'
+        });
+        laydate.render({
+            elem: '#date-end', //指定元素
+            type: 'month',
+            format:'yyyy-MM',
+            value:'{{ request.GET.date_end }}'
+        });
+    });
+    </script>
+{% endblock %}

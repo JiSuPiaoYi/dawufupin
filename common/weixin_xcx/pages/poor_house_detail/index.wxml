@@ -1,0 +1,269 @@
+<view class="page">
+    <view class="page__bd">
+        <view class="weui-tab">
+            <view class="weui-navbar" style='position:fixed;background-color:#fff;'>
+                <block wx:for="{{tabs}}" wx:key="*this">
+                    <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+                        <view class="weui-navbar__title">
+                            {{item}}
+                        </view>
+                    </view>
+                </block>
+                <view class="weui-navbar__slider" style="left: {{sliderLeft}}px; transform: translateX({{sliderOffset}}px); -webkit-transform: translateX({{sliderOffset}}px);"></view>
+            </view>
+            <view class="weui-tab__panel">
+                <view class="weui-tab__content" hidden="{{activeIndex != 0}}">
+                    <view class="weui-cells weui-cells_after-title">
+                        <!-- <view class="weui-cell">
+                            <view class="weui-cell__bd">村编号</view>
+                            <view class="weui-cell__ft">{{detail.now_village_identifier}}</view>
+                        </view> -->
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">归属地</view>
+                            <view class="weui-cell__ft">{{home_location}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">户编号</view>
+                            <view class="weui-cell__ft">{{ detail.house_identifier }}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">户主姓名</view>
+                            <view class="weui-cell__ft">{{ detail.householder_name }}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">户主个人编号</view>
+                            <view class="weui-cell__ft">{{detail.householder_identifier}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">户主身份证号</view>
+                            <view class="weui-cell__ft">{{detail.householder_id}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">首次识别时间</view>
+                            <view class="weui-cell__ft">{{detail.first_identify}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">主要致贫原因</view>
+                            <view class="weui-cell__ft">{{detail.poor_reason}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">是否危房户</view>
+                            <view class="weui-cell__ft">{{detail.danger_house}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">饮水是否安全</view>
+                            <view class="weui-cell__ft">{{detail.water_safe}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">饮水是否困难</view>
+                            <view class="weui-cell__ft">{{detail.water_hard}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">是否享受低保</view>
+                            <view class="weui-cell__ft">{{detail.is_minimum}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">家庭人均纯收入</view>
+                            <view class="weui-cell__ft">{{detail.average_income}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">户主联系电话</view>
+                            <view class="weui-cell__ft">{{detail.telephone}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">脱贫属性</view>
+                            <view class="weui-cell__ft">{{detail.offpoor_attribute}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">脱贫年度</view>
+                            <view class="weui-cell__ft">{{detail.offpoor_year}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">住址</view>
+                            <view class="weui-cell__ft">{{detail.address}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">帮扶人员</view>
+                            <view class="weui-cell__ft">{{detail.help_people}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">帮扶单位</view>
+                            <view class="weui-cell__ft">{{detail.help_unit}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">帮扶方式</view>
+                            <view class="weui-cell__ft">{{detail.help_way}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">帮扶人员电话号码</view>
+                            <view class="weui-cell__ft">{{detail.help_phone}}</view>
+                        </view>
+                    </view>
+                </view>
+                
+                <view class="weui-tab__content" hidden="{{activeIndex != 1}}">
+                    <view style='margin-top:.77em;'></view>
+                    <view class='select-date' style='margin-bottom:10px;'>
+                        <picker bindchange="select_date" value="{{select_date_index}}" range="{{select_date_list}}">
+                            <view style='display:flex;align-items:center;justify-content:center;'>
+                                {{select_date_list[select_date_index]}} 
+                                <text class='icon-bottom' style='display:inline-block;margin-left:5px;'></text>
+                            </view>
+                        </picker> 
+                    </view>
+                    <view wx:for='{{policy_list_dict}}' wx:for-index="policy_name" wx:for-item="item_list">
+                        <view class="weui-cells__title policy-name" data-policy_name='{{policy_name}}' bindtap='policy_list_display_func'>
+                            <text class='{{policy_list_display_dict[policy_name]?"icon-bottom":"icon-right"}}'></text> 
+                            <text style='color:#000000;'>{{policy_name}}</text>
+                        </view>
+                        <view class='policy-content' wx:for='{{item_list}}' wx:for-index="policy_index" wx:for-item="policy" wx:if='{{select_date_list[select_date_index] == policy.date_year || select_date_index == 0}}' hidden='{{!policy_list_display_dict[policy_name]}}'> 
+                            <view wx:if='{{policy_name === "健康扶起来.重病兜底保障一批.“四位一体”一站式服务"}}'>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">兜底属性</view>
+                                    <view class="weui-cell__ft">{{policy.bottom_property}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">住址</view>
+                                    <view class="weui-cell__ft">{{policy.people_address}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">就医机构</view>
+                                    <view class="weui-cell__ft">{{policy.institution_name}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">就医类型</view>
+                                    <view class="weui-cell__ft">{{policy.medical_type}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">疾病</view>
+                                    <view class="weui-cell__ft">{{policy.people_diagnosis}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">入院日期</view>
+                                    <view class="weui-cell__ft">{{policy.in_time}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">出院日期</view>
+                                    <view class="weui-cell__ft">{{policy.off_time}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">医疗费总额（元）</view>
+                                    <view class="weui-cell__ft">{{policy.medical_amount}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">纳入补偿（元）</view>
+                                    <view class="weui-cell__ft">{{policy.inclusion_compensation}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">统筹支付合计（元）</view>
+                                    <view class="weui-cell__ft">{{policy.overall_payment}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">医保补偿（元）</view>
+                                    <view class="weui-cell__ft">{{policy.medical_compensation}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">大病保险（元）</view>
+                                    <view class="weui-cell__ft">{{policy.insurance_indemnity}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">民政救助（元）</view>
+                                    <view class="weui-cell__ft">{{policy.civil_rescue}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">补充保险（元）</view>
+                                    <view class="weui-cell__ft">{{policy.supplement_indemnity}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">患者自付（元）</view>
+                                    <view class="weui-cell__ft">{{policy.people_payment}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">结算日期</view>
+                                    <view class="weui-cell__ft">{{policy.settlement_date}}</view>
+                                </view>
+                            </view>
+                            <view wx:else>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">姓名及与户主关系</view>
+                                    <view class="weui-cell__ft">{{policy.take_obj}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">应享政策名称</view>
+                                    <view class="weui-cell__ft">{{policy.policy_first_layer}}{{policy.policy_second_layer?'.'+policy.policy_second_layer:'.'}}{{policy.policy_third_layer?'.'+policy.policy_third_layer:''}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">补助标准</view>
+                                    <view class="weui-cell__ft">{{policy.subsidy_standard || policy.subsidy_one}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">数量</view>
+                                    <view class="weui-cell__ft">{{policy.policy_multiplier}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">应享金额（元)</view>
+                                    <view class="weui-cell__ft">{{policy.plan_money}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">实享金额（元)</view>
+                                    <view class="weui-cell__ft">{{policy.fact_money}}</view>
+                                </view>
+                                <view class="weui-cell">
+                                    <view class="weui-cell__bd">发放时间</view>
+                                    <view class="weui-cell__ft">{{policy.date_year}}年{{policy.date_month}}月</view>
+                                </view>
+                            </view>
+                            
+                        </view>
+                    </view>
+
+
+
+
+
+
+
+                    <!-- <view class='select-date' >
+                        <picker bindchange="select_date" value="{{select_date_index}}" range="{{select_date_list}}">
+                            {{select_date_list[select_date_index]}} ▼
+                        </picker> 
+                    </view>
+                    <view class='policy-content' wx:for='{{policy_list}}' wx:for-index="policy_index" wx:for-item="policy" wx:if='{{select_date_list[select_date_index] == policy.date_year || select_date_index == 0}}'>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">姓名及与户主关系</view>
+                            <view class="weui-cell__ft">{{policy.take_obj}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">应享政策名称</view>
+                            <view class="weui-cell__ft">{{policy.policy_first_layer}}{{policy.policy_second_layer?'.'+policy.policy_second_layer:'.'}}{{policy.policy_third_layer?'.'+policy.policy_third_layer:''}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">补助标准</view>
+                            <view class="weui-cell__ft">{{policy.subsidy_one}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">数量</view>
+                            <view class="weui-cell__ft">{{policy.policy_multiplier}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">应享金额（元)</view>
+                            <view class="weui-cell__ft">{{policy.plan_money}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">实享金额（元)</view>
+                            <view class="weui-cell__ft">{{policy.fact_money}}</view>
+                        </view>
+                        <view class="weui-cell">
+                            <view class="weui-cell__bd">发放时间</view>
+                            <view class="weui-cell__ft">{{policy.date_year}}年{{policy.date_month}}月</view>
+                        </view>
+                    </view> -->
+
+
+
+
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

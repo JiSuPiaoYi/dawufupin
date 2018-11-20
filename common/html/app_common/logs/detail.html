@@ -1,0 +1,55 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .layui-collapse {
+        border: none;
+    }
+    .layui-colla-item:first-child {
+        margin-top: 0;
+    }
+    .layui-colla-item{
+        margin-top: 20px;
+        border: 1px solid #e6e6e6;
+    }
+    .log-field{
+        padding: 9px 15px;
+        min-height: 20px;
+        line-height: 20px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .log-field:hover{
+        background-color: #f2f2f2;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            {{ info.user_name }}于{{ info.action_time|date:'Y-m-d H:i:s' }}{{ info.message }}
+        </h3>
+    </div>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td style="border-top: none;">
+                    {{ info.detail|safe }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="paginator"></div>
+</div>
+
+{% endblock %}
+{% block script %}
+    <script>
+
+    </script>
+{% endblock %}

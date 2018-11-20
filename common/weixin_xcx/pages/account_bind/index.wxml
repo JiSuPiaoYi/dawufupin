@@ -1,0 +1,53 @@
+
+<view class="page">
+  <view  bindtap="bindViewTap" class="userinfo">
+    <image class="userinfo-avatar" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
+    <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+  </view>
+  <!-- <view style='text-align:center'>
+    <text class="usermotto">微信登录成功，请绑定已有账号</text>
+  </view> -->
+  <view class="alert alert-danger" style="{{is_show_error===1?'display:none;':''}}">
+    <text>{{error_message}}</text>
+  </view>
+  <view class="page__bd" style='margin-top:20px'>
+    <form bindsubmit="formSubmit" bindreset="formReset">
+        <view class='weui-cells weui-cells_after-title'>
+            <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">帐号</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input class="weui-input" placeholder="请输入手机号/帐号" type="number" name="mobile"/>
+                </view>
+          </view>
+          <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                    <view class="weui-label">密码</view>
+                </view>
+                <view class="weui-cell__bd">
+                    <input class="weui-input" placeholder="请输入密码" type="password" name="passwd"/>
+                </view>
+          </view>
+          
+          
+        </view>
+        <view style='margin-top:20px'>
+            <button style='width:90vw;margin:auto;' formType="submit" class="weui-btn" type="primary">登录</button>
+        </view>
+    </form>
+
+      <view class="usermotto">
+         <text>
+            首次登录使用说明：
+            1.帮扶人使用系统内已登录的手机号作为账号，密码为手机号后四位。（如有问题请联系扶贫办）
+            2.参观者可使用配发的账号和密码登录。
+            3.帮扶人仅可查询结对帮扶对象的贫困户信息。
+            4.此处系统平台只提供上报扶贫办后贫困户口享受到的相关政策信息。
+         </text>
+      </view>
+  </view>
+
+
+ 
+</view>

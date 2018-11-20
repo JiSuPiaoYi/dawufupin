@@ -1,0 +1,189 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/bootstrap-iconpicker/bootstrap-iconpicker.min.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block right_content %}
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li><a href="{% url 'template_list' %}">模板管理</a></li>
+            <li class="active">
+                {% if request.GET.id %}编辑{% else %}添加{% endif %}
+            </li>
+        </h3>
+    </div>
+
+    <div class="col-sm-12">
+
+        <table class="table">
+            <caption>
+
+            </caption>
+
+            <tbody>
+                <tr>
+                    <td style="border-top: none;">
+                        <form class="form-horizontal layui-form" role="form">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">标题</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="title" value="{{ template_info.title }}" placeholder="" autocomplete="off" class="layui-input" lay-verify="required">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">列</label>
+                                <div class="col-sm-10">
+                                    <table class="tree table table-bordered">
+                                            <colgroup>
+                                                <col width="50%">
+                                                <col width="30%">
+                                                <col width="20%">
+                                              <col>
+                                            </colgroup>
+                                        <tbody>
+                                            {% for row,field in template_info.row %}
+                                                <tr class="row-tr">
+                                                    <td>
+                                                        <input type="text" name="row" value="{{ row }}" placeholder="" autocomplete="off" class="layui-input" lay-verify="required">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="field" value="{{ field }}" placeholder="" autocomplete="off" class="layui-input">
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="layui-btn layui-btn-xs" onclick="add_row(this)">+</button>
+                                                        <button type="button" class="layui-btn layui-btn-xs" onclick="del_row(this)">-</button>
+                                                    </td>
+                                                </tr>
+                                            {% empty %}
+                                                <tr class="row-tr">
+                                                    <td>
+                                                        <input type="text" name="row" value="" placeholder="" autocomplete="off" class="layui-input" lay-verify="required">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="field" value="" placeholder="" autocomplete="off" class="layui-input">
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="layui-btn layui-btn-xs" onclick="add_row(this)">添加</button>
+                                                        <button type="button" class="layui-btn layui-btn-xs" onclick="del_row(this)">撤销</button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                                    <button type="button" class="layui-btn layui-btn-primary" onclick="preview()">预览</button>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('.tree').treegrid({
+        'initialState': 'expanded',
+
+    });
+
+layui.use('form', function(){
+    var form = layui.form;
+
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+        var template_id = "{{ request.GET.id }}";
+        var url;
+        if(template_id=='' || template_id==null){
+            url = "{% url 'template_add' %}";
+        }else{
+            url = "{% url 'template_edit' %}?id="+template_id;
+        }
+
+        var field_data = data.field;
+
+        var row_items = $(".row-tr");
+        //var row_items = $("input[name='row']");
+        var rows = [];
+        $.each(row_items,function () {
+            rows.push([$(this).find("input[name='row']").val(),$(this).find("input[name='field']").val()]);
+        });
+        field_data['rows_str'] = JSON.stringify(rows);
+        console.log(field_data);
+
+        $.post(url,field_data,function(res){
+            if(res.code === "200"){
+                // if(template_id=='' || template_id==null){
+                //     location.href = "{% url 'template_list' %}"
+                // }else {
+                //     layer.msg(res.message);
+                //     location.href = "{% url 'template_list' %}"
+                // }
+                layer.msg(res.message);
+                location.href = "{% url 'template_list' %}"
+            }else{
+                layer.msg(res.message);
+            }
+        });
+    });
+});
+
+function preview() {
+    layui.use('layer', function(){
+        var layer = layui.layer;
+
+        var preview_html = '<table class="layui-table" style="width: 95%;margin: 20px auto 0 auto;"><tbody><tr><td colspan="100" style="text-align: center;">'+$("input[name='title']").val()+'</td></tr><tr>';
+        var rows = $("input[name='row']");
+        //console.log(rows)
+        $.each(rows,function () {
+            preview_html += '<td>'+$(this).val()+'</td>';
+        });
+        preview_html += '</tr></tbody></table>';
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim', //加上边框
+            shadeClose: true,
+            area: ['95%', '300px'], //宽高
+            content: preview_html
+        });
+    });
+}
+
+function add_row(self) {
+    var html = '<tr class="row-tr">\n' +
+        '                                                    <td>\n' +
+        '                                                        <input type="text" name="row" value="" placeholder="" autocomplete="off" class="layui-input" lay-verify="required">\n' +
+        '                                                    </td>' +
+        '                                                    <td>' +
+        '                                                        <input type="text" name="field" value="" placeholder="" autocomplete="off" class="layui-input">' +
+        '                                                   </td>\n' +
+        '                                                    <td>\n' +
+        '                                                        <button type="button" class="layui-btn layui-btn-xs" onclick="add_row(this)">+</button>\n' +
+        '                                                        <button type="button" class="layui-btn layui-btn-xs" onclick="del_row(this)">-</button>\n' +
+        '                                                    </td>\n' +
+        '                                                </tr>'
+    $(self).parents(".row-tr").after(html)
+}
+
+function del_row(self) {
+    $(self).parents(".row-tr").remove();
+}
+</script>
+{% endblock %}

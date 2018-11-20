@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/layui/css/layui.css"/>
+    <script src="{{ STATIC_URL }}source/jquery/jquery-3.1.1.min.js"></script>
+    <script src="{{ STATIC_URL }}source/layui/layui.js"></script>
+    <script src="{{ STATIC_URL }}source/echarts/echarts.min.js"></script>
+</head>
+<style>
+    .layui-table, .layui-table-view {
+        margin: 0;
+    }
+    .layui-table td, .layui-table th{
+        padding: 0;
+    }
+    .layui-badge{
+        margin-left: 3px;
+        cursor: pointer;
+    }
+    .layui-table tbody tr:hover{
+        background-color: inherit;
+    }
+    .layui-table tbody tr>td:hover{
+        background-color: #f2f2f2;
+    }
+    #main1-form-p{
+        /*height: 49vh;*/
+        position: absolute;
+        top:0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.57);
+    }
+    #main1-form{
+        text-align: center;
+        background-color: #ffffff;
+        border-radius: 4px;
+        padding: 15px;
+        box-sizing: border-box;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        overflow-y: scroll;
+    }
+    #screen-common>.col-md-6{
+        margin-bottom: 70px;
+    }
+</style>
+<body>
+{% if request.GET.screen == '1' %}
+    <div>
+        <table class="layui-table">
+            <colgroup>
+                <col width="50%">
+                <col width="50%">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <td style="height: 50vh;">
+                        <div id="main1" style="height:49vh;"></div>
+                        <div id="diy1-cate" style="position: absolute;bottom:2px;right:2px;">
+                            <span id="trend-money" class="layui-badge layui-bg-black">扶贫资金趋势</span>
+                            <span id="trend-house" class="layui-badge layui-bg-gray">脱贫户数趋势</span>
+                        </div>
+                    </td>
+                    <td style="height: 50vh;position: relative;">
+                        <div id="main2" style="width: 49vw;height:49vh;"></div>
+                        <div id="diy2-year" style="position: absolute;bottom:2px;right:2px;"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="height: 50vh;">
+                        <div id="main5" style="width: 49vw;height:49vh;"></div>
+                    </td>
+                    <td style="height: 50vh;">
+                        <div id="main4" style="width: 49vw;height:49vh;"></div>
+                    </td>
+                </tr>
+                <tr style="display: none;">
+                    <td>
+                        <div id="main3" style="height:49vh;"></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% else %}
+
+    <div class="container">
+        <div id="screen-common" class="row clearfix">
+            <div class="col-md-6 column" style="position: relative;">
+                {% if "扶贫数据概况_添加与编辑趋势数据" in CODENAMES %}
+                    <a id="main1-edit" style="position: absolute;right:5px;top:3px;color: #4183c4;cursor: pointer;z-index: 999;">编辑</a>
+                {% endif %}
+                <div id="main1" style="height:400px;"></div>
+                <div id="main1-form-p" style="display: none;">
+                    <form id="main1-form" class="layui-form"></form>
+                </div>
+            </div>
+            <div class="col-md-6 column">
+                <div id="main2" style="height:400px;"></div>
+            </div>
+            <div class="col-md-6 column">
+                <div id="main3" style="height:400px;"></div>
+            </div>
+            <div class="col-md-6 column">
+                <div id="main4" style="height:400px;"></div>
+            </div>
+            <div class="col-md-6 column">
+                <div id="main5" style="height:400px;"></div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+    <script type="text/javascript">
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main1'));
+        myChart1.showLoading();
+        $.get('{% url "screen_main1" %}',{},function (res) {
+            myChart1.hideLoading();
+            console.log('main1',res)
+
+            //console.log(have_auth,'--------------');
+            //console.log('{{CODENAMES|safe}}')
+
+
+            if(res.is_nothave_overcome_poverty_data){
+                show_edit_main1(res);
+            }
+
+            $("#main1-edit").click(function () {
+                show_edit_main1(res);
+
+            });
+
+            function show_edit_main1(res) {
+                console.log(res.overcome_poverty_list)
+                $("#main1-form-p").show();
+                var years = res.years;
+                var html = '';
+                for(var i in years){
+                    html += '<div class="layui-form-item">\n' +
+                        '                            <label class="layui-form-label overcome_poverty_year">'+years[i]+'年</label>\n' +
+                        '                            <div class="layui-input-block">\n' +
+                        '                                <input type="number" name="overcome_poverty_number" autocomplete="off" placeholder="请输入“'+years[i]+'年”脱贫人数" value="'+res.overcome_poverty_list[i]+'" class="layui-input" required>\n' +
+                        '                            </div>\n' +
+                        '                        </div>'
+                }
+                html += '<div class="layui-form-item">\n' +
+                    '                            <div class="layui-input-block">\n' +
+                    '                                <button id="overcome-poverty-button" type="button" class="layui-btn">保存</button><button id="overcome-poverty-button-cancel" type="button" class="layui-btn layui-btn-primary">取消</button>\n' +
+                    '                            </div>\n' +
+                    '                        </div>';
+                $("#main1-form").html(html);
+
+                $("#overcome-poverty-button-cancel").click(function () {
+                    $("#main1-form-p").hide();
+                });
+
+                $("#overcome-poverty-button").click(function () {
+                    var overcome_poverty_list = [];
+                    $.each($("input[name='overcome_poverty_number']"),function () {
+                        overcome_poverty_list.push($(this).val());
+                    });
+                    var overcome_poverty_year_list = [];
+                    $.each($(".overcome_poverty_year"),function () {
+                        overcome_poverty_year_list.push($(this).text().slice(0,4));
+                    });
+
+                    var is_have_empty = false;
+                    for(var i in overcome_poverty_list){
+                        if(overcome_poverty_list[i] === ''){
+                            is_have_empty = true
+                            break
+                        }
+                    }
+
+                    if(is_have_empty){
+                        alert('请填写完整,必须为数字');
+                    }else{
+                        $.post('{% url "save_overcome_poverty" %}',{
+                            "years":overcome_poverty_year_list,
+                            "overcome_poverty_list":overcome_poverty_list,
+                            "csrfmiddlewaretoken": '{{ csrf_token }}'
+                        },function (overcome_poverty_res) {
+                            $("#main1-form-p").hide();
+                            res.overcome_poverty_list = overcome_poverty_res;
+                            myChart1.setOption({
+                                series: [
+                                    {
+                                        name:'扶贫资金',
+                                        type:'line',
+                                        //stack: '总量',
+                                        data:res.pol_money_list
+                                    },
+                                    {
+                                        name:'脱贫人口数',
+                                        type:'line',
+                                        //stack: '总量',
+                                        data: overcome_poverty_res
+                                    }
+                                ]
+                            });
+                        });
+                    }
+                });
+            }
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart1.setOption({
+                title: {
+                    text: '扶贫趋势',
+                    //subtext: '',
+                    x: 'center',
+                    align: 'right'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data:['扶贫资金','脱贫人口数'],
+                    x: 'left'
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: res.years
+                },
+                // yAxis: {
+                //     name: '扶贫资金(万元)',
+                //     type: 'value'
+                // },
+                yAxis: [
+                    {
+                        name: '扶贫资金(万元)',
+                        type: 'value'
+                    },
+                    {
+                        name: '脱贫人口数(人)',
+                        nameLocation: 'start',
+                        type: 'value',
+                        inverse: true
+                    }
+                ],
+                series: [
+                    {
+                        name:'扶贫资金',
+                        type:'line',
+                        //stack: '总量',
+                        data:res.pol_money_list
+                    },
+                    {
+                        name:'脱贫人口数',
+                        type:'line',
+                        //stack: '总量',
+                        data: res.overcome_poverty_list
+                    }
+                ]
+            });
+
+            $("#trend-money").click(function () {
+                $("#diy1-cate").find('.layui-badge').removeClass('layui-bg-black');
+                $("#diy1-cate").find('.layui-badge').addClass('layui-bg-gray');
+                $(this).removeClass('layui-bg-gray');
+                $(this).addClass('layui-bg-black');
+                myChart1.setOption({
+                    legend: {
+                        data:['扶贫资金']
+                    },
+                    xAxis: {
+                        data: res.years
+                    },
+                    yAxis: {
+                        name: '万元',
+                        type: 'value'
+                    },
+                    series: [{
+                        name:'扶贫资金',
+                        data: res.pol_money_list
+                    }]
+                });
+            });
+            $("#trend-house").click(function () {
+                $("#diy1-cate").find('.layui-badge').removeClass('layui-bg-black');
+                $("#diy1-cate").find('.layui-badge').addClass('layui-bg-gray');
+                $(this).removeClass('layui-bg-gray');
+                $(this).addClass('layui-bg-black');
+                myChart1.setOption({
+                    legend: {
+                        data:['脱贫户数']
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: res.house_by_offpoor_year_list
+                    },
+                    yAxis: {
+                        name: '脱贫户数'
+                    },
+                    series: [{
+                        name:'脱贫户数',
+                        data: res.house_by_offpoor_count_list
+                    }]
+                });
+            });
+        });
+
+
+        var myChart2 = echarts.init(document.getElementById('main2'));
+        myChart2.showLoading();
+        $.get('{% url "screen_main2" %}',{},function (res) {
+            myChart2.hideLoading();
+            console.log(res)
+            // 绘制图表。
+            myChart2.setOption({
+                title: {
+                    text: '扶贫资金占比'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    data:res.policys
+                },
+                //roseType: 'angle',
+                // series: {
+                //     type: 'pie',
+                //     data: res.pol_money_dict_item
+                // }
+
+                series: [
+                    {
+                        name:'扶贫资金占比',
+                        type:'pie',
+                        //radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            // normal: {
+                            //     show: false,
+                            //     position: 'center'
+                            // },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data:res.pol_money_dict_item.all
+                    }
+                ]
+            });
+
+            var year_html = '';
+            $.each(res.years,function (key,value) {
+                if(value === 'all'){
+                    year_html += '<span class="layui-badge layui-bg-black">'+value+'</span>';
+                }else{
+                    year_html += '<span class="layui-badge layui-bg-gray">'+value+'</span>';
+                }
+            });
+            $("#diy2-year").html(year_html);
+
+            $("#diy2-year").find('.layui-badge').click(function () {
+                $("#diy2-year").find('.layui-badge').removeClass('layui-bg-black');
+                $("#diy2-year").find('.layui-badge').addClass('layui-bg-gray');
+                $(this).removeClass('layui-bg-gray');
+                $(this).addClass('layui-bg-black');
+
+                var year = $(this).text();
+                myChart2.setOption({
+                    series: [{
+                        data: res.pol_money_dict_item[year]
+                    }]
+                });
+            });
+        });
+
+        var myChart3 = echarts.init(document.getElementById('main3'));
+        myChart3.showLoading();
+        $.get('{% url "screen_main3" %}',{},function (res) {
+            myChart3.hideLoading();
+            console.log('main3',res)
+            // 绘制图表。
+            myChart3.setOption({
+                title: {
+                    text: '贫困户乡镇占比'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    data:res.towns
+                },
+                series: [
+                    {
+                        name:'扶贫户乡镇占比',
+                        type:'pie',
+                        //radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            // normal: {
+                            //     show: false,
+                            //     position: 'center'
+                            // },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data:res.town_count_dict
+                    }
+                ]
+            });
+        });
+
+        var myChart4 = echarts.init(document.getElementById('main4'));
+        myChart4.showLoading();
+        $.get('{% url "screen_main4" %}',{},function (res) {
+            myChart4.hideLoading();
+            console.log('main4',res)
+            console.log('main4',res)
+            // 绘制图表。
+            myChart4.setOption({
+                title: {
+                    text: '贫困人口乡镇占比'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    data:res.towns
+                },
+                series: [
+                    {
+                        name:'扶贫人口乡镇占比',
+                        type:'pie',
+                        //radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            // normal: {
+                            //     show: false,
+                            //     position: 'center'
+                            // },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data:res.town_count_dict
+                    }
+                ]
+            });
+        });
+
+        var myChart5 = echarts.init(document.getElementById('main5'));
+        myChart5.showLoading();
+        $.get('{% url "screen_main5" %}',{},function (res) {
+            myChart5.hideLoading();
+            console.log('main5',res)
+            // 绘制图表。
+            myChart5.setOption({
+                title: {
+                    text: '致贫原因'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                legend: {
+                    orient: 'vertical',
+                    x: 'right',
+                    data:res.poor_reason_list
+                },
+                series: [
+                    {
+                        name:'致贫原因百分比',
+                        type:'pie',
+                        //radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            // normal: {
+                            //     show: false,
+                            //     position: 'center'
+                            // },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data:res.poor_reason_item
+                    }
+                ]
+            });
+        });
+
+    </script>
+</body>
+</html>

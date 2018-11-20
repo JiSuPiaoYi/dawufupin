@@ -1,0 +1,121 @@
+{% extends "app_common/base.html" %}
+{% block title %}{% endblock %}
+{% block style %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/right_content.css"/>
+    <style>
+        .layui-bg-mydiy{
+            background-color: transparent;
+        }
+        .layui-nav .layui-nav-mored, .layui-nav-itemed>a .layui-nav-more{
+            border-color: rgba(30, 23, 23, 0) rgba(60, 52, 52, 0) #000;
+        }
+        .layui-nav .layui-nav-more{
+            border-color: #000 transparent transparent;
+        }
+        .layui-nav-itemed>a, .layui-nav-tree .layui-nav-title a, .layui-nav-tree .layui-nav-title a:hover{
+            color:#000 !important;
+            /*background-color: #f5f5f5 !important;*/
+            text-decoration:none;
+            font-size: 22px;
+        }
+        .layui-nav-tree .fa{
+            font-size: 22px;
+            color:#9a9a9a;
+            width: 40px;
+        }
+        .layui-nav .layui-nav-item a:hover, .layui-nav .layui-this a{
+            color:#ffffff !important;
+            background-color: #9E9E9E !important;
+            text-decoration:none;
+        }
+        .layui-nav .layui-nav-item a{
+            color:#000;
+        }
+        .layui-nav-itemed>.layui-nav-child{
+            background-color: transparent !important;
+        }
+        .layui-nav .layui-nav-item>a{
+            border-top: 1px solid #ddd;
+            font-size: 22px;
+        }
+        .layui-nav-tree .layui-nav-bar{
+            background-color: #ccc;
+        }
+        .layui-nav-child a{
+            padding-left: 60px !important;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <!-- 主体部分 -->
+    <div class="content">
+        <div class="content_center container" style="padding: 0;">
+
+
+            <div class="clearfix">
+                <div class="col-xs-3" style="padding: 0;width: 22%;">
+
+                    <ul class="layui-nav layui-nav-tree layui-bg-mydiy" lay-filter="test" style="width: 100%;">
+                    <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
+                        {% for nav in NAVLIST %}
+                            <li class="layui-nav-item layui-nav-itemed">
+                                <a href="{% if nav.url == '#' %}javascript:;{% else %}{{ nav.url }}{% endif %}" style="{% if forloop.first %}border:none;{% endif %}"><i class="fa {{ nav.icon }}"></i>{{ nav.name }}</a>
+                                <dl class="layui-nav-child">
+                                    {% for c_nav in nav.children %}
+                                        <dd><a href="{% if c_nav.url == '#' %}javascript:;{% else %}{{ c_nav.url }}{% endif %}">{{ c_nav.name }}</a></dd>
+                                    {% endfor %}
+                                </dl>
+                            </li>
+                        {% endfor %}
+                        {% if request.user.is_superuser %}
+                            <li class="layui-nav-item layui-nav-itemed">
+                                <a href="javascript:;"><i class="fa fa-connectdevelop"></i>开发者工具</a>
+                                <dl class="layui-nav-child">
+                                    <dd><a href="{% url 'nav_list' %}">菜单管理</a></dd>
+{#                                    <dd><a href="{% url 'upload_data' %}">数据上传</a></dd>#}
+                                </dl>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                </div>
+                <div class="col-xs-9" style="border-left: 1px solid #ddd;background-color: #ffffff;width: 78%;padding: 30px;min-height: 1500px;">
+                    {% block right_content %}
+                    这里是内容
+                    {% endblock %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    $(".layui-nav-child>dd>a").bind('click',function () {
+        var text = $(this).text();
+        var text_array = ['贫困村数据','贫困户数据','贫困人口数据','帮扶人员数据'];
+        if(text_array.indexOf(text) !== -1){
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+        }
+    });
+    $(".layui-nav-child>dd>a").each(function (key,value) {
+       var href = $(this).attr('href');
+       if(href == decodeURI('{{ request.get_full_path }}')){
+           $(this).parent().addClass('layui-this');
+       }
+    });
+</script>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

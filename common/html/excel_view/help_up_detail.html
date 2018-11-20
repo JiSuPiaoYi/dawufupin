@@ -1,0 +1,247 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}详情{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .layui-table td, .layui-table th, .layui-table-fixed-r, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row]{
+        border-color:#ffffff;
+    }
+    .layui-form-label{
+        width: auto;
+        padding: 9px 0 9px 10px;
+    }
+    .form-control{
+        border-radius: 2px;
+    }
+    #paginator{
+        margin-top:30px;
+        text-align: center;
+        border-top: 1px solid #eee;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>{{ policy_obj.policy_first_layer }}汇总</li>
+            <li>{{ policy_obj.policy_second_layer }}</li>
+            {% if policy_obj.policy_third_layer %}
+                <li class="active">{{ policy_obj.policy_third_layer }}（{{ policy_obj.subsidy_one }}）</li>
+            {% else %}
+                <li class="active">（{{ policy_obj.subsidy_one }}）</li>
+            {% endif %}
+        </h3>
+    </div>
+    <table class="layui-table">
+        <caption>
+            <form action="{{ request.path }}" method="get">
+                <div class="col-xs-12">
+                    <input type="hidden" name="policy_id" value="{{ request.GET.policy_id }}">
+                </div>
+                <div class="col-xs-6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">乡镇名称</label>
+                        <div class="layui-input-block">
+                            <select class="form-control" name="town_name" onchange="get_village(this)">
+                                <option value="">请选择</option>
+                                {% for town_name in village_data %}
+                                    <option value="{{ town_name }}" {% if request.GET.town_name == town_name %}selected{% endif %}>{{ town_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">行政村名称</label>
+                        <div class="layui-input-block">
+                            <select class="form-control" name="now_village_identifier">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                {% if policy_obj.policy_object == '户' or policy_obj.policy_object == '人' %}
+                <div class="col-xs-12">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">
+                            {% if policy_obj.policy_object == '户' %}
+                                户主身份证号
+                            {% elif policy_obj.policy_object == '人' %}
+                                个人身份证号
+                            {% endif %}
+                        </label>
+                        <div class="layui-input-block">
+                            <input class="form-control" type="text" name="idcard" value="{{ request.GET.idcard }}">
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="col-xs-10">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">时间范围</label>
+                        <div class="layui-input-block">
+                            <div class="layui-input-inline">
+                                <input type="text" id="date-start" name="date_start" autocomplete="off" class="form-control">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline">
+                                <input type="text" id="date-end" name="date_end" autocomplete="off" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <button type="submit" class="layui-btn layui-btn-primary">点击查询</button>
+                </div>
+            </form>
+        </caption>
+        <caption>
+            合计数量：{{sum_data_sum.1|floatformat:2}}，合计应享：{{sum_data_sum.2|floatformat:2}}元，合计实享：{{sum_data_sum.3|floatformat:2}}元，
+            {% if policy_obj.policy_object == '贫困村' %}
+                村数据：
+            {% elif policy_obj.policy_object == '贫困户' or policy_obj.policy_object == '农家乐吸纳就业' %}
+                户数量：
+            {% elif policy_obj.policy_object == '贫困人口' %}
+                人口数量：
+            {% endif %}
+            {{group_count}}
+        </caption>
+        <colgroup>
+            <col width="150">
+            <col width="200">
+            <col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>
+                    {% if policy_obj.policy_object == '贫困村' %}
+                        村名称
+                    {% elif policy_obj.policy_object == '贫困户' or policy_obj.policy_object == '农家乐吸纳就业' %}
+                        户主姓名
+                    {% elif policy_obj.policy_object == '贫困人口' %}
+                        姓名
+                    {% endif %}
+                </th>
+                <th>
+                    {% if policy_obj.policy_object == '贫困村' %}
+                        村编号
+                    {% elif policy_obj.policy_object == '贫困户' or policy_obj.policy_object == '农家乐吸纳就业' %}
+                        户主身份证号
+                    {% elif policy_obj.policy_object == '贫困人口' %}
+                        个人身份证号
+                    {% endif %}
+                </th>
+{#                <th>标准</th>#}
+                <th>数量</th>
+                <th>应享(元)</th>
+                <th>实享(元)</th>
+                <th>发放日期</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for detail in data %}
+            <tr>
+                <td>
+{#                    {% if policy_obj.policy_object == '村' %}#}
+{#                        {{ detail.now_administrative_village|default:'' }}#}
+{#                    {% elif policy_obj.policy_object == '户' %}#}
+{#                        {{ detail.householder_name|default:'' }}#}
+{#                    {% elif policy_obj.policy_object == '人' %}#}
+{#                        {{ detail.people_name|default:'' }}#}
+{#                    {% endif %}#}
+
+                    {% if detail.someone_name %}
+                        {{ detail.someone_name }}
+                    {% elif detail.householder_name %}
+                        <span style="color:red;">?</span> {{ detail.householder_name }}
+                    {% elif detail.people_name %}
+                        <span style="color:red;">?</span> {{ detail.people_name }}
+                    {% else %}
+
+                    {% endif %}
+                </td>
+                <td>
+                    {% if policy_obj.policy_object == '贫困村' %}
+                        {{ detail.now_village_identifier }}
+                    {% elif policy_obj.policy_object == '贫困户' or policy_obj.policy_object == '农家乐吸纳就业' %}
+                        {{ detail.householder_id }}
+                    {% elif policy_obj.policy_object == '贫困人口' %}
+                        {{ detail.people_id }}
+                    {% endif %}
+                </td>
+{#                <td></td>#}
+                <td>{{ detail.policy_multiplier }}</td>
+                <td>{{ detail.plan_money }}</td>
+                <td>{{ detail.fact_money }}</td>
+                <td>{{ detail.date_year|cut:'.0' }}-{{ detail.date_month }}</td>
+                <td>{{ detail.remarks }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div id="paginator"></div>
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+    var village_data = JSON.parse('{{ village_data_str|safe }}');
+    console.log(village_data);
+
+    function get_village(self) {
+        var town_name = $(self).val();console.log(town_name);
+        var village_list = village_data[town_name];
+        var html = '<option value="">请选择</option>';
+        $.each(village_list,function (key,value) {
+            html += '<option value="'+key+'">'+value+'</option>';
+        });
+        $("select[name='now_village_identifier']").html(html);
+    }
+
+    $(function () {
+        get_village($("select[name='town_name']"));
+        console.log($("select[name='now_village_identifier']>option"))
+        $.each($("select[name='now_village_identifier']>option"),function (key,value) {
+            if($(value).attr('value') === '{{ request.GET.now_village_identifier }}'){
+                $("select[name='now_village_identifier']").val('{{ request.GET.now_village_identifier }}');
+            }
+        });
+    });
+
+    layui.use(['laypage', 'layer','laydate'], function(){
+        var laypage = layui.laypage,layer = layui.layer,laydate = layui.laydate;
+        //完整功能
+        laypage.render({
+            elem: 'paginator',
+            curr:'{{ page }}',
+            limit:'{{ every_page_number }}',
+            count: '{{ count }}',
+            layout: ['count', 'prev','page', 'next',  'skip'],
+            jump: function(obj,first){
+                console.log(obj)
+                if(!first){
+                    //layer.msg('第 '+ obj.curr +' 页');
+                    window.location.href = '{{ request.path }}?policy_id={{ policy_id }}&town_name={{ request.GET.town_name }}&now_village_identifier={{ request.GET.now_village_identifier }}&card_id={{ request.GET.card_id }}&date_start={{ request.GET.date_start }}&date_end={{ request.GET.date_end }}&page='+obj.curr;
+                }
+            }
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#date-start', //指定元素
+            type: 'month',
+            format:'yyyy-MM',
+            value:'{{ request.GET.date_start }}'
+        });
+        laydate.render({
+            elem: '#date-end', //指定元素
+            type: 'month',
+            format:'yyyy-MM',
+            value:'{{ request.GET.date_end }}'
+        });
+    });
+    </script>
+{% endblock %}

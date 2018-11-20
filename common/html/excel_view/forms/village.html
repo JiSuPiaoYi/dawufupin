@@ -1,0 +1,282 @@
+{% extends "excel_view/data_correct.html" %}
+
+{% block search %}
+    <form id="form-save" class="layui-form" action="">
+        <table>
+            <tbody>
+                <tr style="display: none;">
+                    <td>
+                        <input type="text" name="type" value="{{ request.GET.type }}">
+                        <input type="text" name="number" value="{{ request.GET.number }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">行政村</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_administrative_village" value="{{ result.now_administrative_village }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">负责人</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_responsible_person" value="{{ result.now_responsible_person }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">总户数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_home_number" value="{{ result.now_home_number }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">贫困户数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_poor_home" value="{{ result.now_poor_home }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">人口总数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_people_number" value="{{ result.now_people_number }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">贫困人口数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_poor_people" value="{{ result.now_poor_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">是否为贫困村</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="now_is_poor" value="贫困村" title="是" {% if result.now_is_poor == '贫困村' %}checked{% endif %}>
+                                <input type="radio" name="now_is_poor" value="非贫困村" title="否" {% if result.now_is_poor == '非贫困村' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">乡（镇）</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="town_name" value="{{ result.town_name }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="2">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">村编号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_village_identifier" value="{{ result.now_village_identifier }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">是否参与合并</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="is_merge" value="合并" title="是" {% if result.is_merge == '合并' %}checked{% endif %}>
+                                <input type="radio" name="is_merge" value="未合并" title="否" {% if result.is_merge == '未合并' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">发展方向</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_development_direction" value="{{ result.now_development_direction }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">村办公电话</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_telephone_number" value="{{ result.now_telephone_number }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">村官人数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_village_officer" value="{{ result.now_village_officer }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">中共党员数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_party_member" value="{{ result.now_party_member }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">地形地貌</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_terrain_physiognomy" value="{{ result.now_terrain_physiognomy }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">维度</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_dimension" value="{{ result.now_dimension }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">经度</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_longitude" value="{{ result.now_longitude }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">低保户数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_minimum_home" value="{{ result.now_minimum_home }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">低保人口数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_minimum_people" value="{{ result.now_minimum_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">五保户数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_five_home" value="{{ result.now_five_home }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">五保人口数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_five_people" value="{{ result.now_five_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">少数民族人口数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_nation_people" value="{{ result.now_nation_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">妇女人口数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_woman_people" value="{{ result.now_woman_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">残疾人口数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_handicapped_people" value="{{ result.now_handicapped_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">劳动力人数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_labor_people" value="{{ result.now_labor_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">外出务工人数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_egression_people" value="{{ result.now_egression_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶人员</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_help_people" value="{{ result.now_help_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶单位</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_help_unit" value="{{ result.now_help_unit }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶方式</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_help_way" value="{{ result.now_help_way }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" type="button" lay-submit lay-filter="form_save">保存</button>
+                        {% if request.GET.number != None %}
+                        <a class="layui-btn layui-btn-danger" href="{% url 'data_correct_delete' %}?type={{ request.GET.type }}&data_id={{ result.id }}">删除</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

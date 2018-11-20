@@ -1,0 +1,26 @@
+/* pages/change_mobile/index.wxss */
+
+.wrap-content{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.content-form{
+    width:90vw;
+    height:50vh;
+    background-color:#ffffff;
+    box-shadow: 0 3px 8px 0 rgba(173,173,173,0.30);
+    border-radius: 2px;
+    box-sizing: border-box;
+    padding:0 20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+form{
+    display: block;
+}

@@ -1,0 +1,71 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}历史数据{% endblock %}
+{% block css %}
+
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+
+<table class="table">
+	<caption>
+        {% if ol_path_list %}
+            <ol class="breadcrumb offset-top-30" style="background-color: #ffffff;">
+                <li><a href="/excel_view/index/?id={{ request.GET.id }}">{{ department_info.name }}</a></li>
+                {% for v,i in ol_path_list %}
+                    {% if forloop.last %}
+                        <li class="active">{{ v }}</li>
+                        {% else %}
+                        <li><a href="/excel_view/index/{{ i }}?id={{ request.GET.id }}">{{ v }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+        {% endif %}
+        <a href="#" class="layui-btn">创建目录</a>
+        <button class="layui-btn layui-btn-danger">上传文件</button>
+    </caption>
+   <tbody>
+   {% if prev_request_dir != None %}
+       <tr>
+           <td>
+               <span class="glyphicon glyphicon-level-up" style="color: rgba(4, 33, 67, 0.5);"></span>
+               {% if prev_request_dir == '' %}
+                   <a href="/excel_view/index/?id={{ request.GET.id }}">
+               {% else %}
+                   <a href="/excel_view/index/{{ prev_request_dir }}/?id={{ request.GET.id }}">
+               {% endif %}
+                   ..
+               </a>
+           </td>
+       </tr>
+       {% elif dirlist|length == '0' %}
+       <tr>
+           <td>没有文件</td>
+       </tr>
+   {% endif %}
+   {% for i in dirlist %}
+       <tr>
+           <td>
+               <span class="glyphicon glyphicon-folder-open" style="color: rgba(4, 33, 67, 0.5);"></span>
+               <a href="{{ i.name }}/?id={{ request.GET.id }}">
+                   {{ i.name }}
+               </a>
+           </td>
+           <td style="width: 200px;">{{ i.update_time|date:'Y-m-d H:i:s' }}</td>
+       </tr>
+   {% endfor %}
+   {% for i in filelist %}
+       <tr>
+           <td>
+               <span class="fa fa-file-text-o"></span>
+               {{ i.name }}
+           </td>
+           <td>{{ i.update_time|date:'Y-m-d H:i:s' }}</td>
+       </tr>
+   {% endfor %}
+   </tbody>
+</table>
+</div>
+{% endblock %}
+{% block script %}
+
+{% endblock %}

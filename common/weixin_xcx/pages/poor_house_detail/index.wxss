@@ -1,0 +1,62 @@
+/* pages/poor_house_detail/index.wxss */
+
+.policy-content {
+  width: 95%;
+  background: #fff;
+  margin: 2vh auto;
+  /* padding: 0 32rpx 42rpx 32rpx; */
+  box-sizing: border-box;
+  /* box-shadow: 0 6rpx 20rpx 0 rgba(255, 177, 186, 0.30); */
+  border-radius: 4rpx;
+  box-shadow:0 3px 10px 0 #ddd;
+  padding:15px 0;
+  font-size: 14px;
+}
+
+.weui-cell__ft{
+    max-width: 70%;
+}
+
+.select-date{
+    text-align:center;
+    padding:8px 0;
+    background-color:#ffffff;
+    margin:10px auto 0 auto;
+    width:95vw;
+    box-shadow:0 3px 10px 0 #ddd;
+}
+
+.policy-name{
+    padding:8px 15px;
+    background-color:#eee;
+    width:95vw;
+    box-sizing:border-box;
+    margin:0 auto .77em auto;
+    display:flex;
+    align-items:center;
+}
+
+.icon-left {
+  transform: rotate(45deg);
+  border-bottom: 3rpx solid #000000;
+  border-left: 3rpx solid #000000;
+  width: 12rpx;
+  height: 12rpx;
+  margin-right: 6px;
+}
+.icon-right {
+  transform: rotate(225deg);
+  border-bottom: 3rpx solid #000000;
+  border-left: 3rpx solid #000000;
+  width: 12rpx;
+  height: 12rpx;
+  margin-right: 6px;
+}
+.icon-bottom {
+  transform: rotate(135deg);
+  border-top: 3rpx solid #000000;
+  border-right: 3rpx solid #000000;
+  width: 12rpx;
+  height: 12rpx;
+  margin-right: 6px;
+}

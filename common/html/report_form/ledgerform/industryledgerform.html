@@ -1,0 +1,239 @@
+{#{% extends "app_common/base_site.html" %}#}
+{##}
+{#{% block title %}“产业扶起来”政策落实调查汇总表(台账表){% endblock %}#}
+{##}
+{#{% block css %}#}
+{#   <style>#}
+{#     .up{#}
+{#         border-bottom:solid 1px #f0f0f0;#}
+{#     }#}
+{##}
+{#     .up .drop_flat{#}
+{#         width:20%;#}
+{#         height:50px;#}
+{#         float:left;#}
+{#         cursor:pointer;#}
+{#     }#}
+{##}
+{#     .up .drop_flat .drop_coarse{#}
+{#         font-size:18px;#}
+{#         margin-bottom:6px;#}
+{#         text-align:center;#}
+{#     }#}
+{##}
+{#     .up .drop_flat .drop_down{#}
+{#         display:none;#}
+{#         position:absolute;#}
+{#         min-width:220px;#}
+{#         background-color:#f9f9f9;#}
+{#         box-shadow:8px 8px 10px #c0c0c0;#}
+{#         border-radius:8px;#}
+{#     }#}
+{##}
+{#     .up .drop_flat .drop_down .drop_capacitor{#}
+{#         display:block;#}
+{#         text-decoration:none;#}
+{#         color:black;#}
+{#         padding:12px;#}
+{#         font-size:14px;#}
+{#     }#}
+{##}
+{#     .drop_flat:hover .drop_down{#}
+{#         display:block;#}
+{#     }#}
+{##}
+{#     .drop_capacitor:hover{#}
+{#         background-color:#f1f1f1;#}
+{#     }#}
+{##}
+{#     .down{#}
+{#         margin-top:50px;#}
+{#     }#}
+{##}
+{#     .down .title{#}
+{#         height:30px;#}
+{#         font-size:18px;#}
+{#         text-align:center;#}
+{#         line-height:30px;#}
+{#         margin-bottom:5px;#}
+{#     }#}
+{##}
+{#     .down .conversion{#}
+{#         height:30px;#}
+{#         font-size:14px;#}
+{#         text-align:right;#}
+{#         line-height:30px;#}
+{#         margin-bottom:5px;#}
+{#     }#}
+{##}
+{#     .down .tabulation{#}
+{#         font-size:14px;#}
+{#     }#}
+{##}
+{#     .down .tabulation table{#}
+{#         table-layout:fixed;#}
+{#     }#}
+{##}
+{#     .down .tabulation table td{#}
+{#         text-align:center;#}
+{#         vertical-align:middle;#}
+{#     }#}
+{##}
+{#     .down .tabulation table tbody td{#}
+{#         overflow:hidden;#}
+{#         text-overflow:ellipsis;#}
+{#         word-break:keep-all;#}
+{#         cursor:default;#}
+{#     }#}
+{##}
+{#     .down .paging{#}
+{#         height:30px;#}
+{#     }#}
+{##}
+{#     .down .paging .paging_edit{#}
+{#         float:right;#}
+{#         height:100%;#}
+{#     }#}
+{##}
+{#     .down .paging .paging_edit span{#}
+{#         display:block;#}
+{#         float:right;#}
+{#         height:25px;#}
+{#         width:40px;#}
+{#         border:solid 1px;#}
+{#         text-align:center;#}
+{#         border-radius:5px;#}
+{#         cursor:pointer;#}
+{#         padding-top:2px;#}
+{#     }#}
+{##}
+{#     .down .paging .paging_edit input{#}
+{#         float:right;#}
+{#         height:25px;#}
+{#         width:60px;#}
+{#         text-align:center;#}
+{#         margin-right:8px;#}
+{#         border-radius:5px;#}
+{#         margin-top:1px;#}
+{#     }#}
+{##}
+{#     .down .paging .paging_mark{#}
+{#         float:right;#}
+{#         height:100%;#}
+{#         margin-right:15px;#}
+{#         padding-top:3px;#}
+{#     }#}
+{##}
+{#     .down .paging .paging_mark a{#}
+{#         text-decoration:none;#}
+{#         color:black;#}
+{#     }#}
+{#   </style>#}
+{#{% endblock %}#}
+{##}
+{#{% block right_content %}#}
+{#    <div class="up" id="up">#}
+{#        {% for f in flexibleledgerform_list %}#}
+{#            <div class="drop_flat">#}
+{#                <div class="drop_coarse">{{ f.coarse_class }}</div>#}
+{#                <div class="drop_down">#}
+{#                    {% for fk in f.subdivided_capacitor.keys %}#}
+{#                        <a href="#" class="drop_capacitor">{{ fk }}</a>#}
+{#                    {% endfor %}#}
+{#                </div>#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#        <div style="clear:both"></div>    {# 使div(.up)高度自适应 #}
+{#    </div>#}
+{##}
+{#    <div class="down">#}
+{#        <div class="title">#}
+{#            “产业扶起来”政策落实调查汇总表(台账表)#}
+{#        </div>#}
+{#        <div class="conversion">#}
+{#            单位：万元、亩、头（只、个、公斤）#}
+{#        </div>#}
+{#        <div class="tabulation">#}
+{#            <table class="table table-bordered">#}
+{#                <thead>#}
+{#                    <tr>#}
+{#                        <td rowspan="2">乡镇（区）</td>#}
+{#                        <td rowspan="2">行政村</td>#}
+{#                        <td rowspan="2">户主姓名</td>#}
+{#                        <td rowspan="2">户主身份证号</td>#}
+{#                        <td rowspan="2">家庭人数</td>#}
+{#                        <td colspan="4">发展项目</td>#}
+{#                        <td colspan="3">卡主</td>#}
+{#                        <td rowspan="2">开户行</td>#}
+{#                        <td rowspan="2">银行卡号</td>#}
+{#                    </tr>#}
+{#                    <tr>#}
+{#                        <td>类别</td>#}
+{#                        <td>名称</td>#}
+{#                        <td>规模</td>#}
+{#                        <td>拟定享受标准</td>#}
+{#                        <td>姓名</td>#}
+{#                        <td>与户主的关系</td>#}
+{#                        <td>身份证号</td>#}
+{#                    </tr>#}
+{#                </thead>#}
+{#                <tbody>#}
+{#                    {% for i in industryledgerform_list %}#}
+{#                        <tr>#}
+{#                            <td title="{{ i.town_name }}">{{ i.town_name }}</td>#}
+{#                            <td title="{{ i.administrative_village }}">{{ i.administrative_village }}</td>#}
+{#                            <td title="{{ i.householder_name }}">{{ i.householder_name }}</td>#}
+{#                            <td title="{{ i.householder_id }}">{{ i.householder_id }}</td>#}
+{#                            <td title="{{ i.family_number }}">{{ i.family_number }}</td>#}
+{#                            <td title="{{ i.project_category }}">{{ i.project_category }}</td>#}
+{#                            <td title="{{ i.project_name }}">{{ i.project_name }}</td>#}
+{#                            <td title="{{ i.project_scale }}">{{ i.project_scale }}</td>#}
+{#                            <td title="{{ i.project_standard }}">{{ i.project_standard }}</td>#}
+{#                            <td title="{{ i.cardholder_name }}">{{ i.cardholder_name }}</td>#}
+{#                            <td title="{{ i.cardholder_relationship }}">{{ i.cardholder_relationship }}</td>#}
+{#                            <td title="{{ i.cardholder_id }}">{{ i.cardholder_id }}</td>#}
+{#                            <td title="{{ i.bank_name }}">{{ i.bank_name }}</td>#}
+{#                            <td title="{{ i.bank_number }}">{{ i.bank_number }}</td>#}
+{#                        </tr>#}
+{#                    {% endfor %}#}
+{#                </tbody>#}
+{#            </table>#}
+{#        </div>#}
+{#        <div class="paging">#}
+{#            <div class="paging_edit">#}
+{#                <span id="convert_page">跳转</span>#}
+{#                <input type="text" id="pages" name="pages">#}
+{#            </div>#}
+{#            <div class="paging_mark">#}
+{#                {% if industryledgerform_list.has_previous %}    {# 如果当前页有上一页 #}
+{#                    <a href="?page={{ industryledgerform_list.previous_page_number }}">#}
+{#                        <span class="glyphicon glyphicon-chevron-left"></span>#}
+{#                    </a>#}
+{#                {% endif %}#}
+{#                <span>#}
+{#                    {{ industryledgerform_list.number }}/{{ industryledgerform_list.paginator.num_pages }}    {# 当前页码/总页数 #}
+{#                </span>#}
+{#                {% if industryledgerform_list.has_next %}    {# 如果当前页有下一页 #}
+{#                    <a href="?page={{ industryledgerform_list.next_page_number }}">#}
+{#                        <span class="glyphicon glyphicon-chevron-right"></span>#}
+{#                    </a>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}
+{##}
+{#{% block script %}#}
+{#    <script type="text/javascript">#}
+{#        $(function(){#}
+{#            $("#up").children().eq(0).children().eq(0).css("color","#1874cd");#}
+{#        });#}
+{##}
+{#        $(function(){#}
+{#            $("#convert_page").click(function(){#}
+{#                var page_value=$("#pages").val();#}
+{#                $(location).attr("href","?page="+page_value+"");#}
+{#            })#}
+{#        })#}
+{#    </script>#}
+{#{% endblock %}#}

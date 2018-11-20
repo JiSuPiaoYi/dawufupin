@@ -1,0 +1,277 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .list-group{
+        min-height: 176px;
+    }
+    .list-group-item{
+        border: none;
+        border-bottom: 1px solid #ddd;
+        background-color: transparent;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+    .layui-card-header{
+        border-bottom: 1px solid #ddd;
+    }
+
+    #paginator{
+        margin-top:30px;
+        text-align: center;
+        border-top: 1px solid #eee;
+    }
+
+    .layui-colla-item:first-child {
+        margin-top: 0;
+    }
+    .layui-colla-item {
+        margin-top: 20px;
+        border: 1px solid #e6e6e6;
+    }
+    .layui-collapse {
+        border: none;
+    }
+    .layui-colla-content td,.layui-colla-content th{
+        border: none;
+    }
+    .layui-colla-content th{
+        font-weight: 700;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>系统管理</li>
+            <li class="active">基层反馈处理</li>
+        </h3>
+    </div>
+    <form action="/app_common/feedback_export/" method="get">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">时间</label>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <input type="text" id="date-start" name="date_start" autocomplete="off" class="layui-input" required>
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <input type="text" id="date-end" name="date_end" autocomplete="off" class="layui-input" required>
+                </div>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <button class="layui-btn" type="submit">导出Excel</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <table class="table">
+        <caption>
+            <div class="col-xs-12" style="margin-bottom: 20px;">
+                <div class="input-group">
+                    <input id="keyword" type="text" value="{{request.GET.keyword}}" name="keyword" class="form-control" placeholder="请输入反馈人姓名或手机号">
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" href="javascript:;" onclick="window.location.href='?keyword='+$('#keyword').val()">搜索</a>
+                    </span>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+        </caption>
+        <tbody>
+            <tr>
+                <td style="border-top: none;">
+                    <div class="layui-collapse" lay-accordion>
+                        {% for i in data %}
+                        <div class="layui-colla-item item-div">
+                            <h2 class="layui-colla-title">
+                                <div class="col-xs-5">反馈人：{{ i.user_name }}（{{i.mobile}}）</div>
+                                <div class="col-xs-4">反馈时间：{{ i.create_time|date:'Y-m-d H:i:s' }}</div>
+                                <i class="layui-icon layui-colla-icon" onclick="target_content(this)"></i>
+                                <i class="layui-icon layui-colla-icon" onclick="target_content(this)" style="display: none;"></i>
+                            </h2>
+                            <div class="layui-colla-content">
+                                <table class="layui-table" lay-size="sm" style="margin: 0;">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width: 150px;">反馈内容：</th>
+                                            <td>
+                                                <div class="col-xs-8">
+                                                    {{ i.content }}
+                                                </div>
+                                                {% if i.img_path %}
+                                                <div class="col-xs-4 img-view-td">
+                                                    <img style="cursor: pointer;" layer-pid="feedback-img-{{i.id}}" layer-src="{{ STATIC_URL }}upload/images/{{i.img_path}}" src="{{ STATIC_URL }}upload/images/{{i.img_path}}" alt="">
+                                                </div>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% if i.about_object and i.about_object_content %}
+                                        <tr>
+                                            <th>
+                                                {% if i.about_object %}
+                                                    {{i.about_object|default:''}}
+                                                {% endif %}
+                                            </th>
+                                            <td>
+                                                {% if i.about_object_content %}
+                                                    {{i.about_object_content|default:''}}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <th>处理结果：</th>
+                                            <td colspan="2">
+                                                <!--{% if i.status == 2 %}-->
+                                                    <!--<a class="layui-btn layui-btn-xs" href="javascript:;" onclick="affirm_feedback('{{i.id}}')">确认</a>-->
+                                                <!--{% elif i.status == 1 %}-->
+                                                    <!--已确认-->
+                                                <!--{% endif %}-->
+                                                <text class="remarks-text">{{i.remarks}}</text>
+                                                <a style="display: none;" href="javascript:;" class="remarks-btn layui-btn layui-btn-xs" onclick="show_remarks_models(this,'{{i.id}}')" data-text="{{i.remarks}}">编辑</a>
+                                            </td>
+                                        </tr>
+
+
+                                        <!--<tr class="item-tr">-->
+                                          <!---->
+                                            <!--<td class="img-view-td">-->
+                                                <!--<img style="cursor: pointer;" layer-pid="feedback-img-{{i.id}}" layer-src="{{ STATIC_URL }}upload/images/{{i.img_path}}" src="{{ STATIC_URL }}upload/images/{{i.img_path}}" alt="">-->
+                                            <!--</td>-->
+                                            <!--<td>-->
+                                                <!--&lt;!&ndash;{% if i.status == 2 %}&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;<a class="layui-btn layui-btn-xs" href="javascript:;" onclick="affirm_feedback('{{i.id}}')">确认</a>&ndash;&gt;-->
+                                                <!--&lt;!&ndash;{% elif i.status == 1 %}&ndash;&gt;-->
+                                                    <!--&lt;!&ndash;已确认&ndash;&gt;-->
+                                                <!--&lt;!&ndash;{% endif %}&ndash;&gt;-->
+                                                <!--<text class="remarks-text">{{i.remarks}}</text>-->
+                                                <!--<a style="display: none;" href="javascript:;" class="remarks-btn layui-btn layui-btn-xs" onclick="show_remarks_models(this,'{{i.id}}')" data-text="{{i.remarks}}">编辑</a>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <div id="paginator"></div>
+</div>
+
+
+<div class="modal fade" id="remarks-models" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">处理结果</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="obj_id">
+                <textarea id="remarks" name="remarks" class="form-control" rows="6"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="edit_remarks()">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+        layui.use(['laypage','layer','laydate'], function(){
+            var laypage = layui.laypage,layer = layui.layer,laydate = layui.laydate;
+            //完整功能
+            laypage.render({
+                elem: 'paginator',
+                curr:'{{ page }}',
+                limit:'{{ every_page_number }}',
+                count: '{{ count }}',
+                layout: ['count', 'prev','page', 'next',  'skip'],
+                jump: function(obj,first){
+                    console.log(obj)
+                    if(!first){
+                        //layer.msg('第 '+ obj.curr +' 页');
+                        window.location.href = '{{ request.path }}?keyword={{request.GET.keyword}}&page='+obj.curr;
+                    }
+                }
+            });
+
+
+            layer.photos({
+                photos:'.img-view-td',
+                anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+            });
+
+
+            laydate.render({
+                elem: '#date-start' //指定元素
+            });
+            laydate.render({
+                elem: '#date-end' //指定元素
+            });
+        });
+
+        function affirm_feedback(id){
+            $.get('/app_common/affirm_feedback/?obj_id='+id,{},function (res) {
+                window.location.reload();
+            });
+        }
+        function show_remarks_models(self,id) {
+            var remarks = $(self).attr('data-text');
+            $("input[name='obj_id']").val(id);
+            $("#remarks").val(remarks);
+            $('#remarks-models').modal('show')
+        }
+        function edit_remarks() {
+            $.post("/app_common/edit_remarks/",{
+                "obj_id":$("input[name='obj_id']").val(),
+                "remarks":$("#remarks").val()
+            },function (res) {
+                if(res.code === '200'){
+                    window.location.reload()
+                }else{
+                    alert(res.message);
+                }
+
+            });
+        }
+
+        function target_content(self) {
+            var content_eleme = $(self).parents('.layui-colla-item').find('.layui-colla-content');
+            var now_is_show = content_eleme.eq(0).hasClass('layui-show');
+            if(now_is_show){
+                $(".layui-colla-content").removeClass('layui-show');
+                $(self).parent().find('.layui-icon').eq(0).show();
+                $(self).parent().find('.layui-icon').eq(1).hide();
+            }else{
+                $(".layui-colla-content").removeClass('layui-show');
+                content_eleme.addClass('layui-show');
+                $(self).parent().find('.layui-icon').eq(0).hide();
+                $(self).parent().find('.layui-icon').eq(1).show();
+            }
+        }
+
+        $(function () {
+            $(".item-div").hover(function () {
+               $(this).find('.remarks-text').hide();
+                $(this).find('.remarks-btn').show();
+            },function () {
+                $(this).find('.remarks-btn').hide();
+                $(this).find('.remarks-text').show();
+            });
+        });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,24 @@
+<view class="page">
+
+    <view class="page__bd">
+
+        <view class="weui-panel">
+            <!-- <view class="weui-panel__hd">通告列表</view> -->
+            <view class="weui-panel__bd">
+                
+                <view class="weui-media-box weui-media-box_text" wx:for='{{policy_list}}' wx:for-index="policy_index" wx:for-item="policy">
+                    <navigator url="/pages/policy_detail/index?id={{policy.id}}" hover-class="navigator-hover">
+                        <view class="weui-media-box__title weui-media-box__title_in-text">{{policy.title}}</view>
+                    </navigator>
+                    <view class="weui-media-box__desc">{{policy.short_content}}</view>
+                    <view class="weui-media-box__info">
+                        <!-- <view class="weui-media-box__info__meta">{{annunciate.type==1?'通告':'政令'}}</view> -->
+                        <view class="weui-media-box__info__meta">{{policy.create_time}}</view>
+                    </view>
+                </view>
+                
+                
+            </view>
+        </view>
+    </view>
+</view>

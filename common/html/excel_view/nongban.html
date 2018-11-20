@@ -1,0 +1,121 @@
+{% extends "app_common/base_site.html" %}
+{% load excel_view_filter %}
+
+{% block title %}管理主页{% endblock %}
+
+{#{% block css %}#}
+{#<style>#}
+{#    a:hover{#}
+{#        text-decoration:none;#}
+{#    }#}
+{#.site-doc-icon{#}
+{#    margin-bottom: 50px;#}
+{#    font-size: 0;#}
+{#}#}
+{#.site-doc-icon li{#}
+{#    display: inline-block;#}
+{#    vertical-align: middle;#}
+{#    width: 127px;#}
+{#    height: 105px;#}
+{#    line-height: 25px;#}
+{#    padding: 20px 0;#}
+{#    margin-right: -1px;#}
+{#    margin-bottom: -1px;#}
+{#    border: 1px solid #e2e2e2;#}
+{#    font-size: 14px;#}
+{#    text-align: center;#}
+{#    color: #666;#}
+{#    transition: all .3s;#}
+{#    -webkit-transition: all .3s;}#}
+{#.site-doc-anim li{#}
+{#    height: auto;#}
+{#}#}
+{#.site-doc-icon li .layui-icon{#}
+{#    display: inline-block;#}
+{#    font-size: 36px;#}
+{#}#}
+{##}
+{#.site-doc-icon li .doc-icon-name,#}
+{#.site-doc-icon li .doc-icon-code{#}
+{#    color: #c2c2c2;#}
+{#}#}
+{#.site-doc-icon li .doc-icon-fontclass{#}
+{#    height: 40px;#}
+{#    line-height: 20px;#}
+{#    padding: 0 5px;#}
+{#    font-size: 13px;#}
+{#    color: #333;#}
+{#}#}
+{#.site-doc-icon li:hover{#}
+{#    background-color: #f2f2f2;#}
+{#    color: #000;#}
+{#}#}
+{##}
+{#.site-doc-icon li{#}
+{#    width: 25%;#}
+{#}#}
+{#.site-doc-icon li .layui-anim{#}
+{#    width: 150px;#}
+{#    height: 150px;#}
+{#    line-height: 150px;#}
+{#    margin: 0 auto 10px;#}
+{#    text-align: center;#}
+{#    background-color: #009688;#}
+{#    cursor: pointer;#}
+{#    color: #fff;#}
+{#    border-radius: 50%;#}
+{#}#}
+{#</style>#}
+{#{% endblock %}#}
+
+{% block right_content %}
+<div class="page-header">
+    <h3 class="breadcrumb" style="background-color:inherit;margin-bottom:0;">
+        <li>政策落实部门</li>
+        <li class="active">农办</li>
+    </h3>
+</div>
+<div class="col-xs-12">
+
+{#    <div style="padding-top:15px;">#}
+{#        <p style="font-size:20px;display:inline-block;">农办部门细类</p>#}
+{#        <span class="glyphicon glyphicon-triangle-bottom" style="color:#009688;"></span>#}
+{#    </div>#}
+
+    <div style="margin-top:20px;">
+        {% for nav in nav_list %}
+            {% if nav.name|nongban_auth:'农办_' in CODENAMES  %}
+                <a href="{{ nav.url }}" style="text-decoration:none;color:black;">
+                    <div style="border-left:5px solid #009688;background-color:#f2f2f2;margin-bottom:20px;">
+                        <p style="padding:10px 10px;font-size:17px;">{{ nav.name }}</p>
+                    </div>
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+{#    <ul class="site-doc-icon site-doc-anim">#}
+{#        {% for nav in nav_list %}#}
+{#            {% if nav.name|nongban_auth:'农办_' in CODENAMES  %}#}
+{#            <li>#}
+{#                <a href="{{ nav.url }}">#}
+{#                    <div class="layui-anim" data-anim="layui-anim-rotate">{{ nav.name }}</div>#}
+{#                </a>#}
+{#            </li>#}
+{#            {% endif %}#}
+{#        {% endfor %}#}
+{#    </ul>#}
+
+</div>
+
+{% endblock %}
+
+{#{% block script %}#}
+{#    <script>#}
+{#    $(".layui-anim").hover(function () {#}
+{#        $(this).addClass($(this).attr('data-anim'));#}
+{#    },function () {#}
+{#        $(this).removeClass($(this).attr('data-anim'));#}
+{#    });#}
+{#    </script>#}
+{#{% endblock %}#}

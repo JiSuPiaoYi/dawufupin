@@ -1,0 +1,50 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <table class="table table-bordered" style="margin-top: 20px;">
+        <caption>
+            <h3>
+                搜索“{{ request.GET.keyword }}”从
+                <a href="/excel_view/index/?id={{ request.GET.id }}">{{ department_obj.name }}/历史数据</a>
+            </h3>
+        </caption>
+        <tbody id="file-result">
+        {% for file in file_tree %}
+            <tr style="border: 1px solid #d1cece;">
+                <td style="border:none;">
+                    <span class="fa fa-file"></span>&nbsp;
+                    <a href="/repository/repository_files/{{ file }}/?repository_id={{ request.GET.repository_id }}">{{ file }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+        {% for i in results %}
+            <tr style="border: 1px solid #d1cece;">
+                <td style="border:none;">
+                    <h4 class="weui-media-box__title">
+                        <a href="/excel_view/file_view{{ i.url }}/?id={{ request.GET.id }}" target="_blank">{{ i.title }}</a>
+                    </h4>
+                    <p class="weui-media-box__desc">{{ i.content|slice:"145" }}</p>
+                </td>
+            </tr>
+
+        {% empty %}
+            <tr style="border: 1px solid #d1cece;">
+                <td style="border:none;">
+                    <p style="text-align: center;padding: 30px 0;">没有搜索结果！</p>
+                </td>
+            </tr>
+        {% endfor %}
+
+
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block script %}
+
+{% endblock %}

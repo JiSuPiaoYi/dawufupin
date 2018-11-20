@@ -1,0 +1,279 @@
+{% extends "excel_view/data_correct.html" %}
+
+{% block search %}
+    {% for man in result %}
+    <form class="layui-form" action="">
+        <table>
+            <tbody>
+                <tr style="display: none;">
+                    <td>
+                        {% csrf_token %}
+                        <input type="text" name="type" value="{{ request.GET.type }}">
+                        <input type="text" name="number" value="{{ request.GET.number }}">
+                        <input type="text" name="id" value="{{ man.id }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="people_name" value="{{ man.people_name }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">出生日期</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="birth_date" value="{{ man.birth_date }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">健康状况</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="health_situation" value="{{ man.health_situation }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">户编号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="house_identifier" value="{{ man.house_identifier }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">个人编号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="people_identifier" value="{{ man.people_identifier }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">个人身份证号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="people_id" value="{{ man.people_id }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">与户主的关系</label>
+                            <div class="layui-input-block">
+                                <select name="people_relationship" lay-verify="">
+                                    <option value="">请选择</option>
+                                    <option value="户主" {% if man.people_relationship == '户主' %}selected{% endif %}>户主</option>
+                                    <option value="配偶" {% if man.people_relationship == '配偶' %}selected{% endif %}>配偶</option>
+                                    <option value="之子" {% if man.people_relationship == '之子' %}selected{% endif %}>之子</option>
+                                    <option value="之女" {% if man.people_relationship == '之女' %}selected{% endif %}>之女</option>
+                                    <option value="之孙子" {% if man.people_relationship == '之孙子' %}selected{% endif %}>之孙子</option>
+                                    <option value="之孙女" {% if man.people_relationship == '之孙女' %}selected{% endif %}>之孙女</option>
+                                    <option value="之儿媳" {% if man.people_relationship == '之儿媳' %}selected{% endif %}>之儿媳</option>
+                                    <option value="之母" {% if man.people_relationship == '之母' %}selected{% endif %}>之母</option>
+                                    <option value="之父" {% if man.people_relationship == '之父' %}selected{% endif %}>之父</option>
+                                    <option value="之外孙女" {% if man.people_relationship == '之外孙女' %}selected{% endif %}>之外孙女</option>
+                                    <option value="之外孙子" {% if man.people_relationship == '之外孙子' %}selected{% endif %}>之外孙子</option>
+                                    <option value="之女婿" {% if man.people_relationship == '之女婿' %}selected{% endif %}>之女婿</option>
+                                    <option value="之婆婆" {% if man.people_relationship == '之婆婆' %}selected{% endif %}>之婆婆</option>
+                                    <option value="之祖母" {% if man.people_relationship == '之祖母' %}selected{% endif %}>之祖母</option>
+                                    <option value="之祖父" {% if man.people_relationship == '之祖父' %}selected{% endif %}>之祖父</option>
+                                    <option value="之公公" {% if man.people_relationship == '之公公' %}selected{% endif %}>之公公</option>
+                                    <option value="之岳母" {% if man.people_relationship == '之岳母' %}selected{% endif %}>之岳母</option>
+                                    <option value="之岳父" {% if man.people_relationship == '之岳父' %}selected{% endif %}>之岳父</option>
+                                    <option value="之外祖母" {% if man.people_relationship == '之外祖母' %}selected{% endif %}>之外祖母</option>
+                                    <option value="其他" {% if man.people_relationship == '其他' %}selected{% endif %}>其他</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">民族</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="people_nation" value="{{ man.people_nation }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">文化程度</label>
+                            <div class="layui-input-block">
+                                <select name="education_degree" lay-verify="">
+                                    <option value="">请选择</option>
+                                    <option value="文盲或半文盲" {% if man.education_degree == '文盲或半文盲' %}selected{% endif %}>文盲或半文盲</option>
+                                    <option value="学龄前儿童" {% if man.education_degree == '学龄前儿童' %}selected{% endif %}>学龄前儿童</option>
+                                    <option value="小学" {% if man.education_degree == '小学' %}selected{% endif %}>小学</option>
+                                    <option value="初中" {% if man.education_degree == '初中' %}selected{% endif %}>初中</option>
+                                    <option value="高中" {% if man.education_degree == '高中' %}selected{% endif %}>高中</option>
+                                    <option value="大专及以上" {% if man.education_degree == '大专及以上' %}selected{% endif %}>大专及以上</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">在校生状况</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="school_situation" value="{{ man.school_situation }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">劳动技能</label>
+                            <div class="layui-input-block">
+                                <select name="labor_ability" lay-verify="">
+                                    <option value="">请选择</option>
+                                    <option value="无劳动力" {% if man.labor_ability == '无劳动力' %}selected{% endif %}>无劳动力</option>
+                                    <option value="普通劳动力" {% if man.labor_ability == '普通劳动力' %}selected{% endif %}>普通劳动力</option>
+                                    <option value="丧失劳动力" {% if man.labor_ability == '丧失劳动力' %}selected{% endif %}>丧失劳动力</option>
+                                    <option value="技能劳动力" {% if man.labor_ability == '技能劳动力' %}selected{% endif %}>技能劳动力</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">务工时间（月）</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="work_time" value="{{ man.work_time }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">是否参加大病医疗</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="join_medical" value="是" title="是" {% if man.join_medical == '是' %}checked{% endif %}>
+                                <input type="radio" name="join_medical" value="否" title="否" {% if man.join_medical == '否' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">脱贫属性</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="offpoor_attribute" value="已脱贫（享受政策）" title="已脱贫（享受政策）" {% if man.offpoor_attribute == '已脱贫（享受政策）' %}checked{% endif %}>
+                                <input type="radio" name="offpoor_attribute" value="未脱贫" title="未脱贫" {% if man.offpoor_attribute == '未脱贫' %}checked{% endif %}>
+                            <input type="radio" name="offpoor_attribute" value="返贫" title="返贫" {% if man.offpoor_attribute == '返贫' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">主要致贫原因</label>
+                            <div class="layui-input-block">
+                                <select name="poor_reason" lay-verify="">
+                                    <option value="">请选择</option>
+                                    <option value="交通条件落后" {% if man.poor_reason == '交通条件落后' %}selected{% endif %}>交通条件落后</option>
+                                    <option value="因学" {% if man.poor_reason == '因学' %}selected{% endif %}>因学</option>
+                                    <option value="因残" {% if man.poor_reason == '因残' %}selected{% endif %}>因残</option>
+                                    <option value="因灾" {% if man.poor_reason == '因灾' %}selected{% endif %}>因灾</option>
+                                    <option value="因病" {% if man.poor_reason == '因病' %}selected{% endif %}>因病</option>
+                                    <option value="缺劳力" {% if man.poor_reason == '缺劳力' %}selected{% endif %}>缺劳力</option>
+                                    <option value="缺土地" {% if man.poor_reason == '缺土地' %}selected{% endif %}>缺土地</option>
+                                    <option value="缺技术" {% if man.poor_reason == '缺技术' %}selected{% endif %}>缺技术</option>
+                                    <option value="缺水" {% if man.poor_reason == '缺水' %}selected{% endif %}>缺水</option>
+                                    <option value="缺资金" {% if man.poor_reason == '缺资金' %}selected{% endif %}>缺资金</option>
+                                    <option value="自身发展动力不足" {% if man.poor_reason == '自身发展动力不足' %}selected{% endif %}>自身发展动力不足</option>
+                                    <option value="其他" {% if man.poor_reason == '其他' %}selected{% endif %}>其他</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">首次识别时间</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="first_identify" value="{{ man.first_identify }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">是否为五保户</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="is_five" value="是" title="是" {% if man.is_five == '是' %}checked{% endif %}>
+                                <input type="radio" name="is_five" value="否" title="否" {% if man.is_five == '否' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">联系电话</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="telephone" value="{{ man.telephone }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">住址</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="address" value="{{ man.address }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶人员</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="help_people" value="{{ man.help_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶单位</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="help_unit" value="{{ man.help_unit }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶方式</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="help_way" value="{{ man.help_way }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" type="button" lay-submit lay-filter="form_save">保存</button>
+                        {% if request.GET.number != None %}
+                        <a class="layui-btn layui-btn-danger" href="{% url 'data_correct_delete' %}?type={{ request.GET.type }}&data_id={{ man.id }}">删除</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+        <hr style="margin: 50px 0;">
+    {% endfor %}
+{% endblock %}

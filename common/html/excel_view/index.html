@@ -1,0 +1,294 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}历史数据{% endblock %}
+{% block css %}
+    <style>
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
+        border-top: none;
+        font-size: 14px;
+        padding: 12px 0 14px 15px;
+    }
+    a:hover{
+        text-decoration:none;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="page-header">
+    <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+        <li>政策落实部门</li>
+        <li class="active">{{ department_info.name }}</li>
+    </h3>
+</div>
+<div class="col-xs-12">
+
+    <table class="table table-hover">
+        <caption>
+            {% if ol_path_list %}
+                <ol class="breadcrumb offset-top-30" style="background-color: #ffffff;">
+                    <li>
+                        <a href="/excel_view/index/?id={{ request.GET.id }}">
+                            {% if request.GET.id == '10' %}
+                                历史数据
+                            {% else %}
+                                {{ department_info.name }}
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% for v,i in ol_path_list %}
+                        {% if forloop.last %}
+                            <li class="active">{{ v }}</li>
+                            {% else %}
+                            <li><a href="/excel_view/index/{{ i }}?id={{ request.GET.id }}">{{ v }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+            {% endif %}
+
+            <form action="/excel_view/search/" method="get" style="margin-bottom: 20px;">
+                <div class="input-group">
+                    <input type="hidden" name="id" value="{{ request.GET.id }}">
+    {#                <input type="text" class="form-control" name="keyword" required>#}
+                     <input type="text" name="keyword" autocomplete="off" class="layui-input" required>
+                    <span class="input-group-btn">
+                        <button class="layui-btn" type="submit">搜索</button>
+                    </span>
+                </div><!-- /input-group -->
+            </form>
+
+            <div>
+                <button type="button" class="layui-btn layui-btn-sm"  onclick="$('#upload_file').click();">上传文件</button>
+                <input style="display: none;"  type="file" id="upload_file" accept=".xls,.xlsx">
+    {#            <form action="/excel_view/create_dir/{{ curr_request_dir }}/" method="get" style="display: inline-block">#}
+    {#                <input type="hidden" name="id" value="{{ request.GET.id }}">#}
+    {#                #}
+    {#            </form>#}
+                <button type="button" class="layui-btn layui-btn-sm" onclick="create_dir()">创建目录</button>
+            </div>
+        </caption>
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>更新时间</th>
+                <th style="min-width: 100px;"></th>
+            </tr>
+        </thead>
+       <tbody>
+       {% if prev_request_dir != None %}
+           <tr>
+               <td>
+                   <span class="glyphicon glyphicon-level-up" style="color: rgba(4, 33, 67, 0.5);"></span>
+                   {% if prev_request_dir == '' %}
+                       <a href="/excel_view/index/?id={{ request.GET.id }}">
+                   {% else %}
+                       <a href="/excel_view/index/{{ prev_request_dir }}/?id={{ request.GET.id }}">
+                   {% endif %}
+                       ..
+                   </a>
+               </td>
+           </tr>
+           {% elif dirlist|length == '0' %}
+           <tr>
+               <td>没有文件</td>
+           </tr>
+       {% endif %}
+       {% for i in dirlist %}
+           <tr>
+               <td>
+                   <span class="glyphicon glyphicon-folder-open" style="color: rgba(4, 33, 67, 0.5);"></span>
+                   <a href="{{ i.name }}/?id={{ request.GET.id }}" style="margin-left: 15px;">
+                       {{ i.name }}
+                   </a>
+               </td>
+               <td style="width: 200px;">{{ i.update_time|date:'Y-m-d H:i:s' }}</td>
+           </tr>
+       {% endfor %}
+       {% for i in filelist %}
+           <tr class="approve-tr">
+               <td>
+                   <span class="fa fa-file-text-o"></span>
+                   <a href="{% url 'file_view' %}{{ i.path }}/?id={{ request.GET.id }}" target="_blank" style="margin-left: 15px;">
+                       {{ i.name }}
+                   </a>
+               </td>
+               <td>{{ i.update_time|date:'Y-m-d H:i:s' }}</td>
+               <td class="approve-hover" data-status="{{i.approve_obj.status}}" data-container="body" data-toggle="popover" data-placement="top" {% if i.approve_obj.status == 2 %}data-content="{{department_info.pid.name|default:'扶贫办'}}"{% else %}data-content="{{i.approve_obj.remark}}"{% endif %} data-p-department="{{department_info.pid.name}}">
+                   {% if i.approve_obj %}
+                        {% if i.approve_obj.status == 2 %}
+                        <span class="layui-badge layui-bg-green">待审核</span>
+                        {% elif i.approve_obj.status == 1 %}
+                        <span class="layui-badge layui-bg-green">已通过</span>
+                        {% elif i.approve_obj.status == 0 %}
+                        <span class="layui-badge layui-bg-green">未通过</span>
+                        {% endif %}
+                   {% endif %}
+               </td>
+           </tr>
+       {% endfor %}
+       </tbody>
+    </table>
+</div>
+
+    <div class="modal fade" id="excel-toload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1080px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="unknown-fields"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary submit-excel-data">确定上传</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+$(function () {
+    $(".approve-tr").hover(function () {
+        var status = $(this).find('.approve-hover').attr("data-status");
+        if(status == 2){
+            $(this).find('.approve-hover').popover({
+                title:'审核部门'
+            }).popover('show');
+        }else if(status == 0){
+            $(this).find('.approve-hover').popover({
+                title:'拒绝原因'
+            }).popover('show');
+        }else if(status == 1){
+            $(this).find('.approve-hover').popover({
+                title:'通过意见'
+            }).popover('show');
+        }
+    },function () {
+        $(this).find('.approve-hover').popover('hide');
+    });
+})
+
+
+    function create_dir() {
+        layui.use('layer',function () {
+            var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+            //自定页
+            layer.open({
+                type: 1,
+                title: '创建目录',
+                skin: 'layui-layer-demo', //样式类名
+                closeBtn: 0, //不显示关闭按钮
+                anim: 2,
+                area: ['500px', '200px'], //自定义文本域宽高
+                shadeClose: true, //开启遮罩关闭
+                content: create_dir_html()
+            });
+        });
+    }
+    function create_dir_html() {
+        var curr_request_dir = '{{curr_request_dir}}';
+        var url;
+        if(curr_request_dir === 'None' || curr_request_dir === ''){
+            url = '/excel_view/create_dir/';
+        }else{
+            url = '/excel_view/create_dir/'+curr_request_dir+'/';
+        }
+        return `
+            <form class="layui-form" action="`+url+`" method="get" style="width:80%;margin:20px auto;">
+                <div class="layui-form-item">
+                    <input type="text" name="name" autocomplete="off" placeholder="请输入目录名称" class="layui-input">
+                </div>
+
+                <div class="layui-form-item">
+                    <input type="hidden" name="id" value="{{ request.GET.id }}">
+                    <button class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                </div>
+            </form>
+        `
+    }
+
+    $('#upload_file').bind("change",function() {
+        layui.use('layer', function() {
+            var $ = layui.jquery, layer = layui.layer;
+
+            layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                time: 30000, //30s后自动关闭
+                shade :0.1,
+                area: ['220px', '180px']
+            });
+        });
+
+        var form_data = new FormData();
+        var file_info = $('#upload_file')[0].files[0];
+        form_data.append('file',file_info);
+        form_data.append('id','{{ request.GET.id }}');
+        form_data.append('curr_request_dir',"{{ curr_request_dir|default:'' }}");
+        if(file_info==undefined){
+            return ;
+        }else {
+            $.ajax({
+                url:"/excel_view/upload_excel_zc/",
+                type:'POST',
+                data: form_data,
+                processData: false,  // tell jquery not to process the data
+                contentType: false, // tell jquery not to set contentType
+                success: function(res) {
+                    layer.closeAll();
+                    if(res.code == '200'){
+                        console.log(res);
+
+                        //$("#excel-toload").find(".modal-title").text("导入数据");
+                        console.log(typeof res.data.tem_is_true);
+                        if(res.data.tem_is_true == false){
+                            $("#excel-toload").modal("show");
+                            $('#upload_file').val("");
+                            var unknown_fields_html = `
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align:center;font-size:22px;">格式不正确：</td>
+                                    </tr>
+                                    <tr>
+                                        <td>`;
+
+                            // $.each(res.data.tem_data, function (k, v) {
+                            //     unknown_fields_html += `<span class="label label-default" style="margin: 3px;font-size: 14px;display: inline-block;">` + v + `</span>`;
+                            // });
+                            unknown_fields_html += `</td>
+                                    </tr>
+                                </tbody>
+                            </table>`;
+                            $("#excel-toload").find(".unknown-fields").empty();
+                            $("#excel-toload").find(".unknown-fields").prepend(unknown_fields_html);
+                            //$("#excel-toload").find(".modal-footer").hide();
+                        }else{
+                            // $("#excel-toload").find(".submit-excel-data").bind("click",function () {
+                            //     $.post("/excel_view/upload_excel_to/",{
+                            //         "inputfile_name":res.data.inputfile_name,
+                            //         "path":res.data.path,
+                            //         "inputfilename":res.data.inputfilename
+                            //     },function (return_data) {
+                            //         if(return_data.code=='200'){
+                            //             window.location.reload();
+                            //         }else{}
+                            //         console.log(return_data);
+                            //     })
+                            // });
+                            // $("#excel-toload").find(".unknown-fields").empty();
+                            // $("#excel-toload").find(".unknown-fields").prepend('<p style="text-align: center;font-size: 20px;">是否上传？</p>');
+                            // $("#excel-toload").find(".modal-footer").show();
+                            window.location.reload();
+                        }
+                    }else {
+                        alert(res.message);
+                    }
+
+
+                }
+            }); // end ajax
+        }
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends "excel_view/data_correct.html" %}
+
+{% block search %}
+    {% for family in result %}
+    <form class="layui-form" action="">
+        <table>
+            <tbody>
+                <tr style="display: none;">
+                    <td>
+                        {% csrf_token %}
+                        <input type="text" name="type" value="{{ request.GET.type }}">
+                        <input type="text" name="number" value="{{ request.GET.number }}">
+                        <input type="text" name="id" value="{{ family.id }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">户主姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="householder_name" value="{{ family.householder_name }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">家庭人口数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="family_number" value="{{ family.family_number }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">贫困户属性</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="poor_attribute" value="一般农户" title="一般农户" {% if family.poor_attribute == '一般农户' %}checked{% endif %}>
+                                <input type="radio" name="poor_attribute" value="一般贫困户" title="一般贫困户" {% if family.poor_attribute == '一般贫困户' %}checked{% endif %}>
+                            <input type="radio" name="poor_attribute" value="五保户" title="五保户" {% if family.poor_attribute == '五保户' %}checked{% endif %}>
+                            <input type="radio" name="poor_attribute" value="五保贫困户" title="五保贫困户" {% if family.poor_attribute == '五保贫困户' %}checked{% endif %}>
+                            <input type="radio" name="poor_attribute" value="低保户" title="低保户" {% if family.poor_attribute == '低保户' %}checked{% endif %}>
+                            <input type="radio" name="poor_attribute" value="低保贫困户" title="低保贫困户" {% if family.poor_attribute == '低保贫困户' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">村编号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="now_village_identifier" value="{{ family.now_village_identifier }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">户编号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="house_identifier" value="{{ family.house_identifier }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">户主个人编号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="householder_identifier" value="{{ family.householder_identifier }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">户主身份证号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="householder_id" value="{{ family.householder_id }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">首次识别时间</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="first_identify" value="{{ family.first_identify }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">主要致贫原因</label>
+                            <div class="layui-input-block">
+                                <select name="poor_reason" lay-verify="">
+                                    <option value="">请选择</option>
+                                    <option value="交通条件落后" {% if family.poor_reason == '交通条件落后' %}selected{% endif %}>交通条件落后</option>
+                                    <option value="因学" {% if family.poor_reason == '因学' %}selected{% endif %}>因学</option>
+                                    <option value="因残" {% if family.poor_reason == '因残' %}selected{% endif %}>因残</option>
+                                    <option value="因灾" {% if family.poor_reason == '因灾' %}selected{% endif %}>因灾</option>
+                                    <option value="因病" {% if family.poor_reason == '因病' %}selected{% endif %}>因病</option>
+                                    <option value="缺劳力" {% if family.poor_reason == '缺劳力' %}selected{% endif %}>缺劳力</option>
+                                    <option value="缺土地" {% if family.poor_reason == '缺土地' %}selected{% endif %}>缺土地</option>
+                                    <option value="缺技术" {% if family.poor_reason == '缺技术' %}selected{% endif %}>缺技术</option>
+                                    <option value="缺水" {% if family.poor_reason == '缺水' %}selected{% endif %}>缺水</option>
+                                    <option value="缺资金" {% if family.poor_reason == '缺资金' %}selected{% endif %}>缺资金</option>
+                                    <option value="自身发展动力不足" {% if family.poor_reason == '自身发展动力不足' %}selected{% endif %}>自身发展动力不足</option>
+                                    <option value="其他" {% if family.poor_reason == '其他' %}selected{% endif %}>其他</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">是否危房户</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="danger_house" value="是" title="是" {% if family.danger_house == '是' %}checked{% endif %}>
+                                <input type="radio" name="danger_house" value="否" title="否" {% if family.danger_house == '否' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">饮水是否安全</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="water_safe" value="是" title="是" {% if family.water_safe == '是' %}checked{% endif %}>
+                                <input type="radio" name="water_safe" value="否" title="否" {% if family.water_safe == '否' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">饮水是否困难</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="water_hard" value="是" title="是" {% if family.water_hard == '是' %}checked{% endif %}>
+                                <input type="radio" name="water_hard" value="否" title="否" {% if family.water_hard == '否' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">家庭人均纯收入</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="average_income" value="{{ family.average_income }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">户主联系电话</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="telephone" value="{{ family.telephone }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">脱贫属性</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="offpoor_attribute" value="已脱贫（享受政策）" title="已脱贫（享受政策）" {% if family.offpoor_attribute == '已脱贫（享受政策）' %}checked{% endif %}>
+                                <input type="radio" name="offpoor_attribute" value="未脱贫" title="未脱贫" {% if family.offpoor_attribute == '未脱贫' %}checked{% endif %}>
+                                <input type="radio" name="offpoor_attribute" value="返贫" title="返贫" {% if family.offpoor_attribute == '返贫' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">脱贫年度</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="offpoor_year" value="{{ family.offpoor_year }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">住址</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="address" value="{{ family.address }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶人员</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="help_people" value="{{ family.help_people }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶单位</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="help_unit" value="{{ family.help_unit }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶方式</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="help_way" value="{{ family.help_way }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" type="button" lay-submit lay-filter="form_save">保存</button>
+                        {% if request.GET.number != None %}
+                        <a class="layui-btn layui-btn-danger" href="{% url 'data_correct_delete' %}?type={{ request.GET.type }}&data_id={{ family.id }}">删除</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+        <hr style="margin: 50px 0;">
+    {% endfor %}
+{% endblock %}

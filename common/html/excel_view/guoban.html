@@ -1,0 +1,226 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}国办数据管理{% endblock %}
+{% block css %}
+    <style>
+    .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th{
+        border-top: none;
+        font-size: 14px;
+        padding: 12px 0 14px 15px;
+    }
+    a:hover{
+        text-decoration:none;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+
+<div class="page-header">
+    <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+        <li>扶贫办</li>
+        <li>国办数据管理</li>
+        {% if curr_request_dir %}
+            <li class="active">{{ curr_request_dir }}</li>
+        {% endif %}
+    </h3>
+</div>
+<div class="col-xs-12">
+
+    <table class="table table-hover">
+        <caption>
+    {#        {% if ol_path_list %}#}
+    {#            <ol class="breadcrumb offset-top-30" style="background-color: #ffffff;">#}
+    {#                <li>#}
+    {#                    <a href="/excel_view/guoban/?id={{ request.GET.id }}">#}
+    {#                        {% if request.GET.id == '10' %}#}
+    {#                            历史数据#}
+    {#                        {% else %}#}
+    {#                            {{ department_info.name }}#}
+    {#                        {% endif %}#}
+    {#                    </a>#}
+    {#                </li>#}
+    {#                {% for v,i in ol_path_list %}#}
+    {#                    {% if forloop.last %}#}
+    {#                        <li class="active">{{ v }}</li>#}
+    {#                        {% else %}#}
+    {#                        <li><a href="/excel_view/guoban/{{ i }}?id={{ request.GET.id }}">{{ v }}</a></li>#}
+    {#                    {% endif %}#}
+    {#                {% endfor %}#}
+    {#            </ol>#}
+    {#        {% endif %}#}
+            {% if curr_request_dir in ' /' or curr_request_dir == None %}
+
+            {% elif curr_request_dir in guoban_childs_dir %}
+                <button type="button" class="layui-btn layui-btn-sm"  onclick="$('#upload_file').click();">上传文件</button>
+                <!--<a type="button" class="layui-btn layui-btn-sm" data-href="/excel_view/sync_mysql/{{ curr_request_dir }}" onclick="sync_mysql(this)">同步到数据库</a>-->
+                <input style="display: none;"  type="file" id="upload_file" accept=".xls,.xlsx">
+            {% endif %}
+    {#        <button class="layui-btn layui-btn-primary layui-btn-sm">默认按钮</button>#}
+            <form action="/excel_view/search/" method="get" style="margin-top: 20px;">
+                <div class="input-group">
+                    <input type="hidden" name="id" value="{{ request.GET.id }}">
+                    <input type="text" name="keyword" autocomplete="off" class="layui-input" required>
+                    <span class="input-group-btn">
+                        <button class="layui-btn" type="submit">搜索</button>
+                    </span>
+                </div><!-- /input-group -->
+            </form>
+
+        </caption>
+       <tbody>
+       {% if prev_request_dir != None %}
+           <tr>
+               <td>
+                   <span class="glyphicon glyphicon-level-up" style="color: rgba(4, 33, 67, 0.5);"></span>
+                   {% if prev_request_dir == '' %}
+                       <a href="/excel_view/guoban/?id={{ request.GET.id }}">
+                   {% else %}
+                       <a href="/excel_view/guoban/{{ prev_request_dir }}/?id={{ request.GET.id }}">
+                   {% endif %}
+                       ..
+                   </a>
+               </td>
+           </tr>
+           {% elif dirlist|length == '0' %}
+           <tr>
+               <td>没有文件</td>
+           </tr>
+       {% endif %}
+       {% for i in dirlist %}
+           <tr>
+               <td>
+                   <span class="glyphicon glyphicon-folder-open" style="color: rgba(4, 33, 67, 0.5);"></span>
+                   <a href="{{ i.name }}/?id={{ request.GET.id }}" style="margin-left: 15px;">
+                       {{ i.name }}
+                   </a>
+               </td>
+               <td style="width: 200px;">{{ i.update_time|date:'Y-m-d H:i:s' }}</td>
+           </tr>
+       {% endfor %}
+       {% for i in filelist %}
+           <tr>
+               <td>
+                   <span class="fa fa-file-text-o"></span>
+                   <a href="{% url 'file_view' %}{{ i.path }}?id={{ request.GET.id }}" target="_blank" style="margin-left: 15px;">
+                       {{ i.name }}
+                   </a>
+               </td>
+               <td>{{ i.update_time|date:'Y-m-d H:i:s' }}</td>
+           </tr>
+       {% endfor %}
+       </tbody>
+    </table>
+</div>
+
+    <div class="modal fade" id="excel-toload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width: 1080px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="unknown-fields"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary submit-excel-data">确定上传</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+    function sync_mysql(self) {
+        layui.use('layer',function () {
+            var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+            //询问框
+            var index = layer.confirm('同步数据库比较耗费网络资源，若数据量较大，同步时间将会较长，确定同步吗？', {
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                layer.load(1, {
+                    shade: [0.1,'#fff'] //0.1透明度的白色背景
+                });
+                layer.close(index);
+                window.location.href = $(self).attr("data-href");
+            });
+        });
+    }
+
+    $('#upload_file').bind("change",function() {
+        var form_data = new FormData();
+        var file_info = $('#upload_file')[0].files[0];
+        form_data.append('file',file_info);
+        form_data.append('curr_request_dir','{{ curr_request_dir|default:'' }}');
+        if(file_info==undefined){
+            return ;
+        }else {
+            $("#loadingToast_autopb .weui-toast__content").text("正在上传，请稍后！");
+            $("#loadingToast_autopb").show();  //弹出提示
+            $.ajax({
+                url:"/excel_view/upload_excel/",
+                type:'POST',
+                data: form_data,
+                processData: false,  // tell jquery not to process the data
+                contentType: false, // tell jquery not to set contentType
+                success: function(res) {
+                    if(res.code == '200'){
+                        console.log(res);
+                        $("#excel-toload").modal("show");
+                        $("#excel-toload").find(".modal-title").text("导入数据");
+                        console.log(typeof res.data.tem_is_true);
+                        if(res.data.tem_is_true == false){
+                            $('#upload_file').val("");
+                            var unknown_fields_html = `
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td style="text-align:center;font-size:22px;">格式不正确,以下列为必须,并且顺序一定：</td>
+                                    </tr>
+                                    <tr>
+                                        <td>`;
+
+                            $.each(res.data.unknown_fields, function (k, v) {
+                                unknown_fields_html += `<span class="label label-default" style="margin: 3px;font-size: 14px;display: inline-block;">` + v + `</span>`;
+                            });
+                            unknown_fields_html += `</td>
+                                    </tr>
+                                </tbody>
+                            </table>`;
+                            $("#excel-toload").find(".unknown-fields").empty();
+                            $("#excel-toload").find(".unknown-fields").prepend(unknown_fields_html);
+                            $("#excel-toload").find(".modal-footer").hide();
+                        }else{
+                            $("#excel-toload").find(".submit-excel-data").bind("click",function () {
+                                $("#loadingToast_autopb .weui-toast__content").text("正在上传，请稍后！");
+                                $("#loadingToast_autopb").show();  //弹出提示
+                                $.post("/excel_view/upload_excel_to/",{
+                                    "inputfile_name":res.data.inputfile_name,
+                                    "path":res.data.path,
+                                    "inputfilename":res.data.inputfilename
+                                },function (return_data) {
+                                    if(return_data.code=='200'){
+                                        window.location.reload();
+                                    }else{
+                                        $("#toast_msg .weui-toast__content").text(return_data.message);
+                                        $("#toast_msg").show();
+                                    }
+                                    console.log(return_data);
+                                })
+                            });
+                            $("#excel-toload").find(".unknown-fields").empty();
+                            $("#excel-toload").find(".unknown-fields").prepend('<p style="text-align: center;font-size: 20px;">是否上传？</p>');
+                            $("#excel-toload").find(".modal-footer").show();
+                        }
+                    }else {
+                        alert(res.message);
+                    }
+
+
+                }
+            }); // end ajax
+        }
+    });
+    </script>
+{% endblock %}

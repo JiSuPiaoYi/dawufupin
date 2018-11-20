@@ -1,0 +1,92 @@
+<view class="page">
+    <view class="page__bd" wx:if='{{page_type === 1}}'>
+        <view class='wrap-content'>
+            <view class='content-form'>
+                <form bindsubmit="formSubmit">
+                    <view class="weui-cells__title">查询贫困户数据</view> 
+                    <view class="weui-cells weui-cells_after-title">
+                        <view class="weui-cell weui-cell_input">
+                            <view class="weui-cell__hd">
+                                <view class="weui-label">家庭成员姓名</view>
+                            </view>
+                            <view class="weui-cell__bd">
+                                <input class="weui-input" name='name' value='{{name}}'/>
+                            </view>
+                        </view>
+                        <view class="weui-cell weui-cell_input">
+                            <view class="weui-cell__hd">
+                                <view class="weui-label">家庭成员身份证</view>
+                            </view>
+                            <view class="weui-cell__bd">
+                                <input class="weui-input" name='idcard' value='{{idcard}}'/>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="weui-btn-area">
+                        <button class="weui-btn" type="primary" formType="submit">查询</button>
+                    </view>
+                </form>
+            </view>
+        </view>
+    </view>
+
+    <view class="page__bd" wx:if='{{page_type === 2}}'>
+
+        <view class="weui-panel">
+            <view class="top-info">
+                <!-- <text wx:if='{{user_info.department_id==28}}'>共 {{count}} 条，共{{num_pages}}页，已加载 {{page}} 页数据</text> -->
+                <text>查询结果：共 {{count}} 条</text>
+                <image src='/images/search_select.png' bindtap='show_search_modal' wx:if="{{user_info.department_id != 28}}"></image>
+            </view>
+            <view class="weui-panel__bd" style='margin-top:45px;'>
+                
+                <view class="weui-media-box weui-media-box_text" wx:for='{{poorhouse_list}}' wx:for-index="poorhouse_index" wx:for-item="poorhouse">
+                    <navigator url="/pages/poor_house_detail/index?id={{poorhouse.id}}&home_location={{poorhouse.home_location}}" hover-class="navigator-hover">
+                        <view class="weui-media-box__title weui-media-box__title_in-text">
+                            户主：{{poorhouse.householder_name}}
+                        </view>
+                    </navigator>
+                    <view class="weui-media-box__info">
+                        <view class="weui-media-box__info__meta">{{poorhouse.poor_attribute}}</view>
+                        <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">户主身份证：{{poorhouse.householder_id}}</view>
+                    </view>
+                    <view class="weui-media-box__info">
+                        <view class="weui-media-box__info__meta">家庭人口数为：{{poorhouse.family_number}}</view>
+                        <view class="weui-media-box__info__meta weui-media-box__info__meta_extra">当前所在：{{poorhouse.home_location}}</view>
+                    </view>
+                </view>
+                
+                
+            </view>
+        </view>
+
+        <view class="search-modal" hidden="{{is_hide_search_modal}}">
+            <form bindsubmit="formSubmit">
+                <view class="weui-cells__title">查询贫困户数据</view> 
+                <view class="weui-cells weui-cells_after-title">
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">家庭成员姓名</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <input class="weui-input" name='name' value='{{name}}'/>
+                        </view>
+                    </view>
+                    <view class="weui-cell weui-cell_input">
+                        <view class="weui-cell__hd">
+                            <view class="weui-label">家庭成员身份证</view>
+                        </view>
+                        <view class="weui-cell__bd">
+                            <input class="weui-input" name='idcard' value='{{idcard}}'/>
+                        </view>
+                    </view>
+                </view>
+                <view class="weui-btn-area">
+                    <button class="weui-btn" type="primary" formType="submit">查询</button>
+                </view>
+            </form>
+        </view>
+        <view class='search-modal-shade' bindtap='hide_search_modal' hidden="{{is_hide_search_modal}}"></view>
+        
+    </view>
+</view>

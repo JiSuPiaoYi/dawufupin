@@ -1,0 +1,116 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}部门管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+
+    <style>
+    .layui-colla-title{
+        background-color: #ffffff;
+    }
+    .layui-colla-item .glyphicon{
+            color:#000;
+            width: 30px;
+        }
+    .layui-colla-item .list-group{
+        padding-left: 65px;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="page-header">
+    <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+        <li>综合管理</li>
+        <li class="active">模板管理</li>
+    </h3>
+</div>
+<div class="col-xs-12">
+    <table class="tree layui-table">
+        <caption>
+            <div class="layui-btn-group demoTable">
+                <a class="layui-btn" href="{% url 'template_add' %}">添加</a>
+            </div>
+        </caption>
+        <thead>
+            <tr>
+                <th>标题</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for template in template_list %}
+            <tr>
+                <td>{{ template.title }}</td>
+                <td style="width: 30%;">
+                    {% if '模板管理_编辑' in CODENAMES  %}
+                        <a href="{% url 'template_edit' %}?id={{ template.id }}" class="layui-btn layui-btn-xs" style="display: block;" title="编辑">编辑</a>
+                    {% endif %}
+                    {% if '模板管理_预览' in CODENAMES %}
+                        <button class="layui-btn layui-btn-xs" data-title="{{template.title}}" data-row="{{template.row}}" onclick="preview(this)">预览</button>
+                    {% endif %}
+                    {% if '模板管理_下载' in CODENAMES %}
+                        <a class="layui-btn layui-btn-xs" href="/excel_view/template_download/?id={{template.id}}">下载</a>
+                    {% endif %}
+                    {% if '模板管理_删除' in CODENAMES %}
+                        <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="del_template('{{template.id}}')">删除</button>
+                    {% endif %}
+
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+
+{% endblock %}
+{% block script %}
+    <script>
+
+    $('.tree').treegrid({
+        'initialState': 'expanded',
+
+    });
+    function del_template(template_id) {
+        layui.use('layer', function(){
+            layer.confirm('确定删除么？', function(index){
+                $.get("{% url 'template_delete' %}?id="+template_id,{},function(res){
+                    if(res.code === "200"){
+                        layer.msg(res.message);
+                        location.href = "{% url 'template_list' %}"
+                    }else{
+                        layer.msg(res.message);
+                    }
+                });
+                layer.close(index);
+
+            });
+        })
+    }
+
+    function preview(self) {
+        var title = $(self).attr('data-title');
+        var row_str = $(self).attr('data-row');
+        var rows = JSON.parse(row_str);
+        layui.use('layer', function(){
+            var layer = layui.layer;
+
+            var preview_html = '<table class="layui-table" style="width: 95%;margin: 20px auto 0 auto;"><tbody><tr><td colspan="100" style="text-align: center;">'+title+'</td></tr><tr>';
+
+            $.each(rows,function (key,value) {
+                preview_html += '<td>'+value[0]+'</td>';
+            });
+            preview_html += '</tr></tbody></table>';
+            layer.open({
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                shadeClose: true,
+                area: ['95%', '400px'], //宽高
+                content: preview_html
+            });
+        });
+    }
+    </script>
+{% endblock %}

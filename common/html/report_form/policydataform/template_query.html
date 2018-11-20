@@ -1,0 +1,31 @@
+<div class="list_part">
+    <p class="p01">政策列表</p>
+</div>
+{% if policystaticform_list %}
+    <div class="specific_part">
+        {% for p in policystaticform_list %}
+            <div class="panel info_part">
+                <div class="panel-heading heading_part">
+                    <span class="glyphicon glyphicon-menu-down down_span" onclick="collapse_up(this)"></span>
+                    <span class="glyphicon glyphicon-menu-right right_span" onclick="collapse_down(this)"></span>
+                    <span class="policy_span">政策名称：{{ p.policy_name }}</span>
+                    <span class="department_span">落实部门：{{ p.implement_department }}</span>
+                    <span class="object_span">针对{{ p.policy_object }}</span>
+                </div>
+                <div class="panel-body collapse">
+                    <div class="first_layer">
+                        <p>补助标准：{{ p.policy_subsidy }}</p>
+                    </div>
+                    <div class="second_layer">
+                        <p>补助上限：{{ p.subsidy_limit }}</p>
+                    </div>
+                    <div class="third_layer">
+                        <p>限制条件：{{ p.limit_condition }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="nodata_part">暂无数据</div>
+{% endif %}

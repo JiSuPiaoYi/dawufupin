@@ -1,0 +1,72 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}{{ obj.title }}{% endblock %}
+{% block css %}
+    <style>
+    .annunciate-content{
+        padding: 20px 50px 10px 50px;
+        font-size: 16px;white-space: pre-wrap;
+        word-wrap: break-word;
+        line-height: 30px;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+
+    <table class="table">
+        <caption>
+            <div style="text-align: right;margin-bottom: 20px;">
+                {% if '政令发布_编辑' in CODENAMES %}
+                    <a href="{% url 'governmentdecree' %}?id={{ obj.id }}" class="layui-btn">编辑<i class="layui-icon"></i></a>
+                {% endif %}
+                {% if '政令发布_删除' in CODENAMES %}
+                    <button class="layui-btn layui-btn-danger" onclick="delete_obj('{{ obj.id }}')">删除<i class="layui-icon"></i></button>
+                {% endif %}
+            </div>
+            <h3>{{ obj.title }}</h3>
+        </caption>
+        <tbody>
+            <tr>
+                <td>
+                    <p class="annunciate-content">
+                        {{ obj.content|safe }}
+                    </p>
+                </td>
+            </tr>
+            {% if attach_path != '' %}
+            <tr>
+                <td>
+                    <span class="glyphicon glyphicon-file"></span>
+                    <a href="/common/upload/{{ obj.attach_path }}" download="{{ attach_path }}">{{ attach_path }}</a>
+                </td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+
+
+
+
+</div>
+{% endblock %}
+{% block script %}
+    <script>
+        function delete_obj(id) {
+            layui.use('layer', function(){
+                layer.confirm('确定删除么？', function(index){
+                    $.get("{% url 'governmentdecree_delete' %}?id="+id,{},function(res){
+                        if(res.code === "200"){
+                            //layer.msg(res.message);
+                            location.href = "/"
+                        }else{
+                            layer.msg(res.message);
+                        }
+                    });
+                    layer.close(index);
+
+                });
+            })
+        }
+    </script>
+{% endblock %}

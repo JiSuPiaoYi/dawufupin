@@ -1,0 +1,71 @@
+{% extends "app_common/base.html" %}
+{% block title %}帮助中心{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/right_content.css"/>
+{% endblock %}
+
+{% block css %}
+<style>
+    #help-content img{
+        max-width: 100%;
+    }
+    .layui-nav-diy{
+        background-color: #ffffff;
+    }
+    .layui-nav-diy .layui-nav-item a{
+        color: #000000;
+    }
+    .layui-this a{
+        color: #ffffff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- 主体部分 -->
+    <div class="content">
+        <div class="content_center container" style="padding: 0;">
+            <div class="clearfix">
+                <div style="background-color: white;">
+                    <div class="layui-side-scroll" style="float: left;width: 30%;">
+                        <ul class="layui-nav layui-nav-tree layui-inline layui-nav-diy" style="width: 90%;">
+                            {% for help in helps %}
+                                <li class="layui-nav-item">
+                                    <a href="javascript:;" data-content="{{help.content}}" onclick="view_content(this)">{{help.title}}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div id="help-content" style="width:70%;float:left;padding: 30px;background-color: #ffffff;">
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    layui.use('element', function(){
+        var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+
+        //监听导航点击
+        element.on('nav(demo)', function(elem){
+            //console.log(elem)
+            layer.msg(elem.text());
+        });
+    });
+    function view_content(self) {
+        console.log($(self))
+        $("#help-content").html($(self).attr('data-content'));
+    }
+    $(".layui-nav-item>a").eq(0).click();
+    $(".layui-nav-item>a").eq(0).addClass('layui-this');
+</script>
+{% endblock %}

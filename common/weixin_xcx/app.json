@@ -1,0 +1,61 @@
+{
+    "pages": [
+        "pages/login/index",
+        "pages/index/index",
+        "pages/logs/logs",
+        "pages/account_bind/index",
+        "pages/user/index",
+        "pages/poor_people/index",
+        "pages/policy/index",
+        "pages/annunciate/index",
+        "pages/feedback/index",
+        "pages/poor_house/index",
+        "pages/annunciate_detail/index",
+        "pages/change_mobile/index",
+        "pages/poor_house_detail/index",
+        "pages/policy_detail/index"
+    ],
+    "window": {
+        "backgroundColor": "#eeeeee",
+        "backgroundTextStyle": "dark",
+        "navigationBarBackgroundColor": "#fff",
+        "navigationBarTitleText": "大悟扶贫",
+        "navigationBarTextStyle": "black"
+    },
+    "tabBar": {
+        "selectedColor": "#2ba328",
+        "backgroundColor": "#ffffff",
+        "list": [
+            {
+                "pagePath": "pages/user/index",
+                "text": "我的",
+                "iconPath": "images/user.png",
+                "selectedIconPath": "images/user_select.png"
+            },
+            {
+                "pagePath": "pages/poor_house/index",
+                "text": "贫困户",
+                "iconPath": "images/search.png",
+                "selectedIconPath": "images/search_select.png"
+            },
+            {
+                "pagePath": "pages/feedback/index",
+                "text": "反馈",
+                "iconPath": "images/feedback.png",
+                "selectedIconPath": "images/feedback_select.png"
+            },
+            {
+                "pagePath": "pages/policy/index",
+                "text": "政令",
+                "iconPath": "images/search.png",
+                "selectedIconPath": "images/search_select.png"
+            },
+            {
+                "pagePath": "pages/annunciate/index",
+                "text": "通告",
+                "iconPath": "images/annunciate.png",
+                "selectedIconPath": "images/annunciate_select.png"
+            }
+        ]
+    }
+}

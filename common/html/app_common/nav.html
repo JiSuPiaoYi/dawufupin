@@ -1,0 +1,97 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+
+    <style>
+    .layui-colla-title{
+        background-color: #ffffff;
+    }
+    .layui-colla-item .glyphicon{
+            color:#000;
+            width: 30px;
+        }
+    .layui-colla-item .list-group{
+        padding-left: 65px;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+
+
+<div class="col-sm-12">
+    <table class="tree table table-bordered">
+        <caption>
+            <div class="layui-btn-group demoTable">
+                <a class="layui-btn" href="{% url 'add_nav' %}">添加</a>
+            </div>
+        </caption>
+        <thead>
+            <tr>
+                <th>名称</th>
+                <th>url</th>
+                <th>是否显示</th>
+                <th>排序</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for nav in nav_list %}
+            <tr class="treegrid-{{ nav.id }}{% if nav.pid_id %} treegrid-parent-{{ nav.pid_id }}{% endif %}">
+                <td>{{ nav.name }}</td>
+                <td>{{ nav.url }}</td>
+                <td>{{ nav.is_show }}</td>
+                <td>{{ nav.sort }}</td>
+                <td style="width: 20%;">
+                    <a href="{% url 'edit_nav' %}?id={{ nav.id }}" class="layui-btn layui-btn-xs"><i class="layui-icon"></i></a>
+                    <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="del_nav('{{ nav.id }}')"><i class="layui-icon"></i></button>
+                </td>
+            </tr>
+{#            {% for c_nav in nav.nav_set.all %}#}
+{#                <tr class="treegrid-{{ c_nav.id }} treegrid-parent-{{ c_nav.pid_id }}">#}
+{#                    <td>{{ c_nav.name }}</td>#}
+{#                    <td>{{ c_nav.url }}</td>#}
+{#                    <td>{{ c_nav.is_show }}</td>#}
+{#                    <td>{{ c_nav.sort }}</td>#}
+{#                    <td>#}
+{#                        <a href="{% url 'edit_nav' %}?id={{ c_nav.id }}" class="layui-btn layui-btn-sm"><i class="layui-icon"></i></a>#}
+{#                        <button class="layui-btn layui-btn-danger layui-btn-sm" onclick="del_nav('{{ c_nav.id }}')"><i class="layui-icon"></i></button>#}
+{#                    </td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+</div>
+
+{% endblock %}
+{% block script %}
+    <script>
+    $('.tree').treegrid({
+        'initialState': 'collapsed',
+
+    });
+    function del_nav(nav_id) {
+        layui.use('layer', function(){
+            layer.confirm('确定删除行么？该菜单下的子菜单也将被删除！', function(index){
+                $.get("{% url 'del_nav' %}?id="+nav_id,{},function(res){
+                    if(res.code === "200"){
+                        //layer.msg(res.message);
+                        location.href = "{% url 'nav_list' %}"
+                    }else{
+                        layer.msg(res.message);
+                    }
+                });
+                layer.close(index);
+
+            });
+        })
+
+    }
+
+    </script>
+{% endblock %}

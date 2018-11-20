@@ -1,0 +1,92 @@
+{% extends "excel_view/data_correct.html" %}
+
+{% block search %}
+    <form id="form-save" class="layui-form" action="">
+        <table>
+            <tbody>
+                <tr style="display: none;">
+                    <td>
+                        <input type="text" name="type" value="{{ request.GET.type }}">
+                        <input type="text" name="number" value="{{ request.GET.number }}">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="helper_name" value="{{ result.helper_name }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">性别</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="helper_sex" value="男" title="男" {% if result.helper_sex == '男' %}checked{% endif %}>
+                                <input type="radio" name="helper_sex" value="女" title="女" {% if result.helper_sex == '女' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">帮扶单位</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="unit_name" value="{{ result.unit_name }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">职务</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="helper_post" value="{{ result.helper_post }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">类型</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="helper_type" value="队长" title="队长" {% if result.helper_type == '队长' %}checked{% endif %}>
+                                <input type="radio" name="helper_type" value="队员" title="队员" {% if result.helper_type == '队员' %}checked{% endif %}>
+                                <input type="radio" name="helper_type" value="结对帮扶责任人" title="结对帮扶责任人" {% if result.helper_type == '结对帮扶责任人' %}checked{% endif %}>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">办公电话</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="office_phone" value="{{ result.office_phone }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="mobile_phone" value="{{ result.mobile_phone }}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button class="layui-btn" type="button" lay-submit lay-filter="form_save">保存</button>
+                        {% if request.GET.number != None %}
+                        <a class="layui-btn layui-btn-danger" href="{% url 'data_correct_delete' %}?type={{ request.GET.type }}&data_id={{ result.id }}">删除</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

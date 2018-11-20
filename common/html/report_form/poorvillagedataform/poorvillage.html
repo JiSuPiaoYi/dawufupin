@@ -1,0 +1,548 @@
+{% extends "app_common/base_site.html" %}
+
+{% block title %}贫困村数据信息{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/report_form/poorvillagedataform/poorvillagedataform.css"/>
+{% endblock %}
+
+{% block right_content %}
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color:inherit;margin-bottom:0">
+            <li>统计及报表</li>
+            <li class="active">贫困村数据</li>
+        </h3>
+    </div>
+
+    <div class="up">
+        行政村数据信息
+    </div>
+
+    <div class="middle">
+        <div class="query_part">查询条件</div>
+        <div class="show_part">
+            <form role="form">
+                <div class="div01">
+                    <p class="town_tag">乡&nbsp;&nbsp;镇&nbsp;&nbsp;名&nbsp;&nbsp;称：</p>
+                    <div class="town_part">
+                        <select id="town_select">
+                            <option value="请选择">请选择</option>
+                            {% for t in town_name %}
+                                <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <p class="definition_tag">行&nbsp;政&nbsp;村&nbsp;名&nbsp;称：</p>
+                    <div class="definition_part">
+                        <select id="definition_select">
+                            <option value="请选择">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="div02">
+                    <p class="responser_tag">村负责人姓名：</p>
+                    <div class="form-group">
+                        <label class="sr-only" for="responser">responser</label>
+                        <input type="text"  id="responser" name="responser" class="form-control responser_input"/>
+                    </div>
+                    <p class="telephone_tag">村&nbsp;办&nbsp;公&nbsp;电&nbsp;话：</p>
+                    <div class="form-group">
+                        <label class="sr-only" for="telephone">telephone</label>
+                        <input type="text"  id="telephone" name="telephone" class="form-control telephone_input"/>
+                    </div>
+                </div>
+                <div class="div03">
+                    <button type="button" class="btn btn-default btn-sm" onclick="commit_form()">点击查询</button>
+                    <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal_show">显示全部</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="down" id="down_show" style="display:none;">
+        <div class="list_part">
+            <p class="p01">行政村列表</p>
+            {% if data_number %}
+                <p class="p02">总计{{ data_number }}条数据</p>
+            {% else %}
+                <p class="p02">总计0条数据</p>
+            {% endif %}
+        </div>
+        {% if poorvillagedata_list %}
+            <div class="specific_part">
+                {% for p in poorvillagedata_list %}
+                    <div class="panel info_part">
+                        <div class="panel-heading heading_part">
+                            <span class="glyphicon glyphicon-menu-down down_span" onclick="collapse_up(this)"></span>
+                            <span class="glyphicon glyphicon-menu-right right_span" onclick="collapse_down(this)"></span>
+                            <span class="village_span">{{ p.now_administrative_village }}</span>
+                            <span class="responser_span">村负责人：{{ p.now_responsible_person }}</span>
+                            <span class="home_span">贫困户数/总户数：{{ p.now_poor_home }}/{{ p.now_home_number }}</span>
+                            <span class="people_span">贫困人口数/总人口数：{{ p.now_poor_people }}/{{ p.now_people_number }}</span>
+                            {% if '贫困村数据_编辑' in CODENAMES %}
+                                <span class="glyphicon glyphicon-edit layui_span" onclick="edit_data('village','{{ p.now_village_identifier }}')"></span>
+                            {% endif %}
+                        </div>
+                        <div class="panel-body collapse">
+                            <div class="first_layer">
+                                <p>所属乡镇：{{ p.town_name }}</p>
+                                <p>村编号：{{ p.now_village_identifier }}</p>
+                                <p>是否为贫困村：{{ p.now_is_poor }}</p>
+                            </div>
+                            <div class="second_layer">
+                                <p>是否参与合并：{{ p.is_merge }}</p>
+                                <p>发展方向：{{ p.now_development_direction }}</p>
+                                <p>村办公电话：{{ p.now_telephone_number }}</p>
+                            </div>
+                            <div class="third_layer">
+                                <p>村官人数：{{ p.now_village_officer }}</p>
+                                <p>中共党员数：{{ p.now_party_member }}</p>
+                                <p>地形地貌：{{ p.now_terrain_physiognomy }}</p>
+                            </div>
+                            <div class="fourth_layer">
+                                <p>纬度：{{ p.now_dimension }}</p>
+                                <p>经度：{{ p.now_longitude }}</p>
+                                <p>低保户数：{{ p.now_minimum_home }}</p>
+                            </div>
+                            <div class="fifth_layer">
+                                <p>低保人口数：{{ p.now_minimum_people }}</p>
+                                <p>五保户数：{{ p.now_five_home }}</p>
+                                <p>五保人口数：{{ p.now_five_people }}</p>
+                            </div>
+                            <div class="sixth_layer">
+                                <p>少数民族人口数：{{ p.now_nation_people }}</p>
+                                <p>妇女人口数：{{ p.now_woman_people }}</p>
+                                <p>残疾人口数：{{ p.now_handicapped_people }}</p>
+                            </div>
+                            <div class="seventh_layer">
+                                <p>劳动力人数：{{ p.now_labor_people }}</p>
+                                <p>外出务工人数：{{ p.now_egression_people }}</p>
+                                <p>帮扶人员：{{ p.now_help_people }}</p>
+                            </div>
+                            <div class="eighth_layer">
+                                <p>帮扶单位：{{ p.now_help_unit }}</p>
+                                <p>帮扶方式：{{ p.now_help_way }}</p>
+                                <p>帮扶人员电话号码：{{ p.now_help_phone }}</p>
+                            </div>
+                            <div class="nineth_layer">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <td>应享政策名称</td>
+                                            <td>补助标准</td>
+                                            <td>数量</td>
+                                            <td>应享金额（元）</td>
+                                            <td>实享金额（元）</td>
+                                            <td>发放时间</td>
+                                            <td>更多信息</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in p.additionaldata %}
+                                        <tr>
+                                            <td class="td_1">
+                                                <span class="td_1_span" onmouseover="showpolicy(this,'{{ item.0 }}')">{{ item.0 }}</span>
+                                            </td>
+                                            <td class="td_2">
+                                                <span class="td_2_span" onmouseover="showstandard(this,'{{ item.1 }}')">{{ item.1 }}</span>
+                                            </td>
+                                            <td class="td_3">{{ item.2 }}</td>
+                                            <td class="td_4">{{ item.3 }}</td>
+                                            {% if item.6 == 'o' %}
+                                                <td class="td_5" style="color:#FF9900;">{{ item.4 }}</td>
+                                            {% else %}
+                                                <td class="td_5">{{ item.4 }}</td>
+                                            {% endif %}
+                                            <td class="td_6">{{ item.5 }}</td>
+                                            <td class="td_7">
+                                                <span class="td_7_span" onmouseover="showmore(this,'{{ item.7 }}','{{ item.8 }}','{{ item.9 }}','{{ item.10 }}')">...</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="paging">
+                <div class="paging_edit">
+                    <span onclick="convert_page({{ curpage }},{{ allpage }})">跳转</span>
+                    <input type="text" id="pages" name="pages">
+                </div>
+                <div class="paging_mark">
+                    {% ifnotequal curpage 1 %}    {# 如果当前页有上一页 #}
+                        <span onclick="last_page({{ curpage }},{{ allpage }},'pagelast')" class="glyphicon glyphicon-chevron-left"></span>
+                    {% endifnotequal %}
+                    <span>
+                        {{ curpage }}/{{ allpage }}    {# 当前页码/总页数 #}
+                    </span>
+                    {% ifnotequal curpage allpage %}    {# 如果当前页有下一页 #}
+                        <span onclick="next_page({{ curpage }},{{ allpage }},'pagenext')" class="glyphicon glyphicon-chevron-right"></span>
+                    {% endifnotequal %}
+                </div>
+            </div>
+        {% else %}
+            <div class="nodata_part">暂无数据</div>
+        {% endif %}
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="modal_show" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        提示
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    由于数据量较大，显示全部数据需要等待较长时间，您确定要显示全部数据？
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="show_data()">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 模态框（Modal） -->
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+
+        var TOWN,DEFINITION,RESPONSER,TELEPHONE;
+
+        //贫困村列表之折叠面板
+        function collapse_up(self) {
+            $(self).hide();
+            $(self).next().show();
+            $(self).parents(".panel").find(".panel-body").collapse('hide');
+        }
+
+        //贫困村列表之展开面板
+        function collapse_down(self) {
+            $(self).hide();
+            $(self).prev().show();
+            $(self).parents(".panel").find(".panel-body").collapse('show');
+        }
+
+        //编辑按钮链接跳转
+        function edit_data(type,identifier){
+            window.open('/excel_view/search_correct/?type='+type+'&number='+identifier);
+        }
+
+        //享受政策之鼠标悬停显示详细
+        function showmore(self,bank_name,bank_number,card_people,people_id){
+            $(self).popover({
+                trigger:'manual',
+                placement:'left',
+                title:'更多信息',
+                html:true,
+                content:'<p>收款银行：<P>'+bank_name+'<p>收款账号：</p>'+bank_number+'<p>收款人姓名：</p>'+card_people+'<p>收款人身份证号：</p>'+people_id
+            }).on('mouseleave',function(){
+                $(self).popover('hide');
+            });
+            $(self).popover('show');
+        }
+
+        //享受政策之鼠标悬停显示详细
+        function showpolicy(self,policy){
+            $(self).popover({
+                trigger:'manual',
+                placement:'top',
+                title:'应享政策名称',
+                html:true,
+                content:policy
+            }).on('mouseleave',function(){
+                $(self).popover('hide');
+            });
+            $(self).popover('show');
+        }
+
+        //享受政策之鼠标悬停显示详细
+        function showstandard(self,standard){
+            $(self).popover({
+                trigger:'manual',
+                placement:'top',
+                title:'补助标准',
+                html:true,
+                content:standard
+            }).on('mouseleave',function(){
+                $(self).popover('hide');
+            });
+            $(self).popover('show');
+        }
+
+        //分页之跳转
+        function convert_page(curpage,allpage) {
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            var gopage = $("#pages").val();
+            var numreg=/^[0-9]+$/g;
+            var nomregok=numreg.test(gopage);
+            if(nomregok==''||nomregok==0||!nomregok){
+                return false;
+            }
+            else {
+                $.ajax({
+                    type: 'post',
+                    datatype: 'json',
+                    url: '/report_form/village_template_initial_paginator/',
+                    data: {
+                        'gopage':gopage,
+                        'curpage':curpage,
+                        'allpage':allpage
+                    },
+                    success: function (data) {
+                        $("#down_show").html(data);
+                        layer.closeAll();
+                    }
+                })
+            }
+        }
+
+        //分页之上一页
+        function last_page(curpage,allpage,pagetype) {
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            $.ajax({
+                type:'post',
+                datatype:'json',
+                url:'/report_form/village_template_initial_paginator/',
+                data:{
+                    'curpage':curpage,
+                    'allpage':allpage,
+                    'pagetype':pagetype
+                },
+                success: function (data) {
+                    $("#down_show").html(data);
+                    layer.closeAll();
+                }
+            })
+        }
+
+        //分页之下一页
+        function next_page(curpage,allpage,pagetype) {
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            $.ajax({
+                type:'post',
+                datatype:'json',
+                url:'/report_form/village_template_initial_paginator/',
+                data:{
+                    'curpage':curpage,
+                    'allpage':allpage,
+                    'pagetype':pagetype
+                },
+                success: function (data) {
+                    $("#down_show").html(data);
+                    layer.closeAll();
+                }
+            })
+        }
+
+        //查询之关联下拉列表
+        $(function() {
+            $("#town_select").change(function () {
+                $("#definition_select").empty().append('<option value="请选择">请选择</option>');
+                var town = $("#town_select").val();
+                $.ajax({
+                    type:'post',
+                    datatype:'json',
+                    url:'/report_form/village_town_change/',
+                    data:{'town':town},
+                    success: function (res){
+                        for(var i=0,len=res.village_name.length;i<len;i++){
+                            var select_html="<option value="+res.village_name[i]+">"+res.village_name[i]+"</option>";
+                            $("#definition_select").append(select_html);
+                        }
+                    }
+                })
+            })
+        });
+
+        //查询功能
+        function commit_form(){
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            TOWN=$("#town_select").val();
+            DEFINITION=$("#definition_select").val();
+            RESPONSER=$("#responser").val();
+            TELEPHONE=$("#telephone").val();
+
+            $.ajax({
+                type: 'post',
+                datatype:'json',
+                url: '/report_form/village_template_query_paginator/',
+                data: {
+                    "town":TOWN,
+                    "definition":DEFINITION,
+                    "responser":RESPONSER,
+                    "telephone":TELEPHONE
+                },
+                success: function(data) {
+                    $("#down_show").css("display","block");
+                    $("#down_show").html(data);
+                    layer.closeAll();
+                }
+            })
+        }
+
+        //分页之跳转（查询结果）
+        function convert_page_query(curpage,allpage) {
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            var gopage = $("#pages").val();
+            var numreg=/^[0-9]+$/g;
+            var nomregok=numreg.test(gopage);
+            if(nomregok==''||nomregok==0||!nomregok){
+                return false;
+            }
+            else {
+                $.ajax({
+                    type:'post',
+                    datatype:'json',
+                    url:'/report_form/village_template_query_paginator/',
+                    data:{
+                        'gopage':gopage,
+                        'curpage':curpage,
+                        'allpage':allpage,
+                        "town":TOWN,
+                        "definition":DEFINITION,
+                        "responser":RESPONSER,
+                        "telephone":TELEPHONE
+                    },
+                    success: function (data) {
+                        $("#down_show").html(data);
+                        layer.closeAll();
+                    }
+                })
+            }
+        }
+
+        //分页之上一页（查询结果）
+        function last_page_query(curpage,allpage,pagetype) {
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            $.ajax({
+                type:'post',
+                datatype:'json',
+                url:'/report_form/village_template_query_paginator/',
+                data:{
+                    'curpage':curpage,
+                    'allpage':allpage,
+                    'pagetype':pagetype,
+                    "town":TOWN,
+                    "definition":DEFINITION,
+                    "responser":RESPONSER,
+                    "telephone":TELEPHONE
+                },
+                success: function (data) {
+                    $("#down_show").html(data);
+                    layer.closeAll();
+                }
+            })
+        }
+
+        //分页之下一页（查询结果）
+        function next_page_query(curpage,allpage,pagetype) {
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            $.ajax({
+                type:'post',
+                datatype:'json',
+                url:'/report_form/village_template_query_paginator/',
+                data:{
+                    'curpage':curpage,
+                    'allpage':allpage,
+                    'pagetype':pagetype,
+                    "town":TOWN,
+                    "definition":DEFINITION,
+                    "responser":RESPONSER,
+                    "telephone":TELEPHONE
+                },
+                success: function (data) {
+                    $("#down_show").html(data);
+                    layer.closeAll();
+                }
+            })
+        }
+
+        //显示所有按钮
+        function show_data() {
+            layui.use('layer', function() {
+                var $ = layui.jquery, layer = layui.layer;
+
+                layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                    time: 30000, //30s后自动关闭
+                    shade :0.1,
+                    area: ['220px', '180px']
+                });
+            });
+
+            window.location.href='/report_form/poorvillagedataform/';
+        }
+    </script>
+{% endblock %}

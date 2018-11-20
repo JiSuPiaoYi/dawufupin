@@ -1,0 +1,123 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}部门管理{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+
+    <style>
+    .layui-colla-title{
+        background-color: #ffffff;
+    }
+    .layui-colla-item .glyphicon{
+            color:#000;
+            width: 30px;
+        }
+    .layui-colla-item .list-group{
+        padding-left: 65px;
+    }
+    #paginator{
+        margin-top:30px;
+        text-align: center;
+        border-top: 1px solid #eee;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="page-header">
+    <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+        <li>系统管理</li>
+        <li class="active">账号管理</li>
+    </h3>
+</div>
+<div class="col-sm-12">
+    <table class="layui-table">
+        <caption>
+            <div class="col-xs-12" style="margin-bottom: 20px;">
+                <div class="input-group">
+                    <input id="keyword" type="text" value="{{request.GET.keyword}}" name="keyword" class="form-control" placeholder="请输入姓名或手机号">
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" href="javascript:;" onclick="window.location.href='?keyword='+$('#keyword').val()">搜索</a>
+                    </span>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+            <div class="layui-btn-group demoTable">
+                <a class="layui-btn" href="{% url 'user_add' %}">添加</a>
+            </div>
+        </caption>
+        <thead>
+            <tr>
+                <th>姓名</th>
+                <th>手机</th>
+                <th>部门</th>
+                <th>超级管理员</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.mobile }}</td>
+                <td>{{ user.department.name }}</td>
+                <td>{{ user.about.is_superuser }}</td>
+                <td style="width: 20%;">
+{#                    <a href="javascript:" class="layui-btn layui-btn-sm" title="配置权限"><i class="glyphicon glyphicon-cog"></i></a>#}
+                    <a href="{% url 'user_edit' %}?mobile={{ user.mobile }}&about_id={{user.about_id}}" class="layui-btn layui-btn-xs"><i class="layui-icon"></i></a>
+                    <button class="layui-btn layui-btn-danger layui-btn-xs" onclick="del_user('{{ user.mobile }}')"><i class="layui-icon"></i></button>
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+    <div id="paginator"></div>
+</div>
+
+{% endblock %}
+{% block script %}
+    <script>
+
+    $('.tree').treegrid({
+        'initialState': 'expanded',
+
+    });
+    function del_user(mobile) {
+        layui.use('layer', function(){
+            layer.confirm('确定删除么？', function(index){
+                $.get("{% url 'user_delete' %}?mobile="+mobile,{},function(res){
+                    if(res.code === "200"){
+                        //layer.msg(res.message);
+                        location.href = "{% url 'user_list' %}"
+                    }else{
+                        layer.msg(res.message);
+                    }
+                });
+                layer.close(index);
+
+            });
+        })
+
+    }
+
+        layui.use(['laypage'], function(){
+        var laypage = layui.laypage,layer = layui.layer,laydate = layui.laydate;
+        //完整功能
+        laypage.render({
+            elem: 'paginator',
+            curr:'{{ page }}',
+            limit:'{{ every_page_number }}',
+            count: '{{ count }}',
+            layout: ['count', 'prev','page', 'next',  'skip'],
+            jump: function(obj,first){
+                console.log(obj)
+                if(!first){
+                    //layer.msg('第 '+ obj.curr +' 页');
+                    window.location.href = '{{ request.path }}?page='+obj.curr+'&keyword={{request.GET.keyword}}';
+                }
+            }
+        });
+    });
+    </script>
+{% endblock %}

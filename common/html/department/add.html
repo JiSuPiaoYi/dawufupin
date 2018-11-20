@@ -1,0 +1,114 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/bootstrap-iconpicker/bootstrap-iconpicker.min.css"/>
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+    <style>
+
+    </style>
+{% endblock %}
+
+{% block right_content %}
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li><a href="{% url 'department_index' %}">部门管理</a></li>
+            <li class="active">
+                {% if request.GET.id %}编辑{% else %}添加{% endif %}
+            </li>
+        </h3>
+    </div>
+
+    <div class="col-sm-12">
+
+        <table class="table">
+            <caption>
+
+            </caption>
+
+            <tbody>
+                <tr>
+                    <td style="border-top: none;">
+                        <form class="form-horizontal layui-form" role="form">
+                            <div class="form-group">
+                                <label for="name" class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-10">
+                                    <input type="text" name="name" value="{{ info.name }}" placeholder="请输入" autocomplete="off" class="layui-input" lay-verify="name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname" class="col-sm-2 control-label">上级部门</label>
+                                <div class="col-sm-10">
+                                    {% if department_list %}
+                                    <table class="tree table table-bordered">
+                                        <tbody>
+                                            {% for department in department_list %}
+                                                <tr class="treegrid-{{ department.id }}{% if department.pid_id %} treegrid-parent-{{ department.pid_id }}{% endif %}">
+                                                    <td style="width: 60px;">
+                                                        <input type="radio" name="pid" value="{{ department.id }}" title="{{ department.name }}" {% if info.pid_id == department.id %}checked{% endif %}>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    {% else %}
+                                        无
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('.tree').treegrid({
+        'initialState': 'expanded',
+
+    });
+
+layui.use('form', function(){
+    var form = layui.form;
+    form.verify({
+        name: function(value, item){ //value：表单的值、item：表单的DOM对象
+            if($.trim(value) == ''){
+              return '部门名称名称不能为空';
+            }
+        },
+
+    });
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+        var department_id = "{{ request.GET.id }}";
+        var url;
+        if(department_id=='' || department_id==null){
+            url = "{% url 'department_add' %}";
+        }else{
+            url = "{% url 'department_edit' %}?id="+department_id;
+        }
+        $.post(url,data.field,function(res){
+            if(res.code === "200"){
+                //layer.msg(res.message);
+                location.href = "{% url 'department_index' %}"
+            }else{
+                layer.msg(res.message);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

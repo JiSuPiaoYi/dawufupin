@@ -1,0 +1,46 @@
+<div class="layui-collapse">
+    {% if old_info %}
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">
+                {% if type == 'delete' %}删除前{% elif type == 'update' %}修改前{% endif %}
+            </h2>
+            <div class="layui-colla-content layui-show">
+                <div class="clearfix">
+                    {% for value in old_info %}
+                        {% if value|length > 30 %}
+                            <div class="col-xs-12 column log-field">
+                            {{ value.verbose_name }}：<br>{{ value.value }}
+                            </div>
+                        {% else %}
+                            <div class="col-xs-4 column log-field">
+                            {{ value.verbose_name }}：{{ value.value }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if update_info %}
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">
+                {% if type == 'add' %}数据详情{% elif type == 'update' %}修改后{% endif %}
+            </h2>
+            <div class="layui-colla-content layui-show">
+                <div class="clearfix">
+                    {% for value in update_info %}
+                        {% if value|length > 30 %}
+                            <div class="col-xs-12 column log-field">
+                            {{ value.verbose_name }}：<br>{{ value.value }}
+                            </div>
+                        {% else %}
+                            <div class="col-xs-4 column log-field">
+                            {{ value.verbose_name }}：{{ value.value }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>

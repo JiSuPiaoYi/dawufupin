@@ -1,0 +1,100 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}source/treegrid/css/jquery.treegrid.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}source/treegrid/js/jquery.treegrid.bootstrap3.js"></script>
+
+    <style>
+    .layui-colla-title{
+        background-color: #ffffff;
+    }
+    .layui-colla-item .glyphicon{
+            color:#000;
+            width: 30px;
+        }
+    .layui-colla-item .list-group{
+        padding-left: 65px;
+    }
+    .float-td>span{
+        float: left;
+    }
+    </style>
+{% endblock %}
+{% block right_content %}
+
+
+<div class="col-sm-12">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+    <form class="form-horizontal" role="form" method="post" action="{% url 'group_auth' %}?id={{ request.GET.id }}">
+        {% csrf_token %}
+        <table class="tree table table-bordered">
+            <caption>
+                <!--面包屑导航开始-->
+                <ol class="breadcrumb offset-top-30" style="background-color: #ffffff;">当前位置：
+                    <li><a href="{% url 'department_index' %}">部门管理</a></li>
+                     <li class="active">“{{ obj.name }}”的权限</li>
+                </ol>
+                <!--面包屑导航结束-->
+            </caption>
+            <tbody>
+            {% for nav in nav_list %}
+                <tr class="treegrid-{{ nav.id }}{% if nav.pid_id %} treegrid-parent-{{ nav.pid_id }}{% endif %}">
+                    <td class="float-td">
+                        <div>
+{#                            <input type="checkbox" name="like1[write]" lay-skin="primary" title="" checked="" onclick="alert();">#}
+                            <input type="checkbox" name="permission" value="{{ nav.permission_id }}" title="{{ nav.name }}" onclick="check_child(this,'{{ nav.id }}','{{ nav.pid_id }}')" {% if nav.permission_id in permission_ids %}checked{% endif %}>{{ nav.name }}
+                        </div>
+
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="layui-btn">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+{% block script %}
+    <script>
+    $('.tree').treegrid({
+        'initialState': 'expanded',
+
+    });
+    function check_child(self,nav_id,pid_id) {
+        var is_checked = $(self).is(':checked');
+        if(is_checked){
+            $(".treegrid-parent-"+nav_id).find("input[type='checkbox']").prop("checked",true);
+        }else{
+            $(".treegrid-parent-"+nav_id).find("input[type='checkbox']").prop("checked",false);
+        }
+
+        var flag = false;
+        for(i=0;i<$(".treegrid-parent-"+pid_id).length;i++){
+            console.log($(".treegrid-parent-"+pid_id).eq(i).find("input[type='checkbox']"))
+            if($(".treegrid-parent-"+pid_id).eq(i).find("input[type='checkbox']").is(':checked')){
+                flag = true
+            }
+        }
+        if(flag){
+            $(".treegrid-"+pid_id).find("input[type='checkbox']").prop("checked",true);
+        }else{
+            $(".treegrid-"+pid_id).find("input[type='checkbox']").prop("checked",false);
+        }
+    }
+    </script>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}管理主页{% endblock %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}source/webuploader/css/webuploader.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/upload_view.css" />
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div id="wrapper">
+        <div id="container">
+            <!--头部，相册选择和格式选择-->
+
+            <div id="uploader">
+                <div class="queueList">
+                    <div id="dndArea" class="placeholder">
+                        <div id="filePicker"></div>
+                        <p>点击按钮上传文件，或将文件拖到这里</p>
+                    </div>
+                </div>
+                <div class="statusBar" style="display:none;">
+                    <div class="progress">
+                        <span class="text">0%</span>
+                        <span class="percentage"></span>
+                    </div><div class="info"></div>
+                    <div class="btns">
+                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+    <script type="text/javascript" src="{{ STATIC_URL }}source/webuploader/js/webuploader.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/upload_view.js"></script>
+{% endblock %}

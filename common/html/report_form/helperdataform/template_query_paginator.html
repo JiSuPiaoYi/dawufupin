@@ -1,0 +1,74 @@
+<div class="list_part">
+    {% if not people_number == 0 %}
+    <p class="p01">
+        帮扶人员列表(总计有{{ people_number }}个帮扶人员)
+    </p>
+    {% else %}
+        帮扶人员列表
+    {% endif %}
+
+    {% if data_number %}
+        <p class="p02">总计{{ data_number }}条数据</p>
+    {% else %}
+        <p class="p02">总计0条数据</p>
+    {% endif %}
+</div>
+{% if helperdata_list %}
+    <div class="specific_part">
+        {% for h in helperdata_list %}
+            <div class="panel info_part">
+                <div class="panel-heading heading_part">
+                    <span class="glyphicon glyphicon-menu-down down_span" onclick="collapse_up(this)"></span>
+                    <span class="glyphicon glyphicon-menu-right right_span" onclick="collapse_down(this)"></span>
+                    <span class="unit_span">帮扶单位：{{ h.unit_name }}</span>
+                    <span class="helper_span">帮扶人员：{{ h.helper_name }}</span>
+                    <span class="phone_span">帮扶人员手机号码：{{ h.mobile_phone }}</span>
+                    <span class="poor_span">帮扶户数：{{ h.poor_home }}</span>
+                    {% if '帮扶人员数据_编辑' in CODENAMES %}
+                        <span class="glyphicon glyphicon-edit layui_span" onclick="edit_data('帮扶人手机号码','{{ h.mobile_phone }}')"></span>
+                    {% endif %}
+                </div>
+                <div class="panel-body collapse">
+                    <div class="first_layer">
+                        <p>帮扶人员类别：{{ h.helper_type }}</p>
+                        <p>帮扶人员性别：{{ h.helper_sex }}</p>
+                        <p>帮扶人员职务：{{ h.helper_post }}</p>
+                    </div>
+                    <div class="second_layer">
+                        <p>帮扶人员办公电话：{{ h.office_phone }}</p>
+                        <p>贫困户户主姓名：{{ h.poor_name }}</p>
+                        <p>贫困户户主所属组别：{{ h.poor_group }}</p>
+                    </div>
+                    <div class="third_layer">
+                        <p>贫困户所属乡镇：{{ h.poor_town }}</p>
+                        <p style="cursor:pointer;font-weight:bold;text-decoration:underline;" onclick="convert_to_house('{{ h.now_village_identifier }}')">贫困户所属行政村：{{ h.now_administrative_village }}</p>
+                        <p>贫困户所属行政村编号：{{ h.now_village_identifier }}</p>
+                    </div>
+                    <div class="fourth_layer">
+                        <p style="cursor:pointer;font-weight:bold;text-decoration:underline;" onclick="convert_to_house('{{ h.household_identifier }}')">贫困户身份证号：{{ h.household_identifier }}</p>
+                        <p>帮扶人身份证号：{{ h.helper_id }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="paging">
+        <div class="paging_edit">
+            <span onclick="convert_page({{ curpage }},{{ allpage }})">跳转</span>
+            <input type="text" id="pages" name="pages">
+        </div>
+        <div class="paging_mark">
+            {% ifnotequal curpage 1 %}    {# 如果当前页有上一页 #}
+                <span onclick="last_page_query({{ curpage }},{{ allpage }},'pagelast')" class="glyphicon glyphicon-chevron-left"></span>
+            {% endifnotequal %}
+            <span>
+                {{ curpage }}/{{ allpage }}    {# 当前页码/总页数 #}
+            </span>
+            {% ifnotequal curpage allpage %}    {# 如果当前页有下一页 #}
+                <span onclick="next_page_query({{ curpage }},{{ allpage }},'pagenext')" class="glyphicon glyphicon-chevron-right"></span>
+            {% endifnotequal %}
+        </div>
+    </div>
+{% else %}
+    <div class="nodata_part">暂无数据</div>
+{% endif %}

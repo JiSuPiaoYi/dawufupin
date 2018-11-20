@@ -1,0 +1,85 @@
+<!--pages/suggest/index.wxml-->
+
+<view class="page">
+
+    <view class="page__bd" style='height:100vh;background: #F3F3F3;'>
+        <form bindsubmit="formSubmit" bindreset="formReset">
+             <!-- <view class='suggest-tip'>
+                类型
+                <view style='width:20px;height:100%;float:right;' bindlongpress='easter_egg'></view>
+            </view>
+            <view class="weui-flex relevance-select">
+                 <view class="select-d" wx:for="{{select_list}}">
+                    <view class="placeholder {{select_feedback_type_id == item.id?'placeholder-select':''}}" data-select_feedback_type_id='{{item.id}}' bindtap='select_feedback_type_func'>{{item.name}}</view>
+                </view> 
+            </view>  -->
+            <view class="weui-cell" style='background-color:#ffffff;margin-top:2vh;'>
+                <view class="weui-cell__bd">类型</view>
+                <view class="weui-cell__ft">
+                    <picker bindchange="select_feedback_type_func" range-key='name' value="{{select_feedback_type_index}}" range="{{select_list}}">
+                        {{select_list[select_feedback_type_index].name || '请选择反馈类型 ▼'}}
+                    </picker> 
+                </view>
+            </view>
+            
+            <view style='margin-top:15px;'>
+                <view class="weui-cells_after-title" style='width:94%;margin:auto;background-color:#ffffff;'>
+                    <view class="weui-cell">
+                        <view class="weui-cell__bd">
+                            <textarea class="weui-textarea" name='content' placeholder="我们会尽快将问题反馈，谢谢支持！" maxlength='255' show-confirm-bar='{{false}}' style="height: 25vh;" placeholder-style='font-size:16px;' bindinput="write_content"/>
+                            <view class="weui-textarea-counter" style='font-size:11px;'>0/255字</view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+
+            <view class="weui-cells__title">
+                涉及对象相关资料
+                <text wx:if='{{about_index !== null}}'>（{{about_objects[about_index]}}）</text>
+            </view>
+            <view class="weui-cells weui-cells_after-title">
+                <view class="weui-cell weui-cell_select">
+                    <view class="weui-cell__hd" style="width: 105px">
+                        <picker bindchange="bindAboutIndexChange" value="{{about_index}}" range="{{about_objects}}">
+                            <view class="weui-select" style='overflow:hidden;white-space:nowrap;text-overflow:ellipsis;'>{{about_objects[about_index]||'请选择'}}</view>
+                        </picker>
+                    </view>
+                    <view class="weui-cell__bd weui-cell__bd_in-select-before">
+                        <input class="weui-input" name='about_object_content' placeholder="请输入{{about_objects[about_index]}}" />
+                    </view>
+                </view>
+            </view>
+
+
+            <view style='background-color:#ffffff;margin-top:2vh;padding:10px 15px;'>
+                <view class="weui-cell__bd">
+                    <view class="weui-uploader">
+                        <view class="weui-uploader__hd">
+                            <view class="weui-uploader__title">图片上传</view>
+                            <view class="weui-uploader__info">{{files.length}}/1</view>
+                        </view> 
+                        <view class="weui-uploader__bd">
+                            <view class="weui-uploader__files" id="uploaderFiles">
+                                <block wx:for="{{files}}" wx:key="*this">
+                                    <view class="weui-uploader__file" bindtap="previewImage" id="{{item}}">
+                                        <image class="weui-uploader__img" src="{{item}}" mode="aspectFill" />
+                                    </view>
+                                </block>
+                            </view>
+                            <view class="weui-uploader__input-box">
+                                <view class="weui-uploader__input" bindtap="chooseImage"></view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+
+
+            <view style='margin:20px auto;'>
+                <button class='diy-btn {{select_feedback_type_id&&content?"green-btn":"gray-btn"}}' formType="submit">确认提交</button>
+            </view>
+        </form>
+    </view>
+
+</view>
+

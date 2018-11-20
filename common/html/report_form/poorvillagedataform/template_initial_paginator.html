@@ -1,0 +1,126 @@
+<div class="list_part">
+    <p class="p01">行政村列表</p>
+    {% if data_number %}
+        <p class="p02">总计{{ data_number }}条数据</p>
+    {% else %}
+        <p class="p02">总计0条数据</p>
+    {% endif %}
+</div>
+{% if poorvillagedata_list %}
+    <div class="specific_part">
+        {% for p in poorvillagedata_list %}
+            <div class="panel info_part">
+                <div class="panel-heading heading_part">
+                    <span class="glyphicon glyphicon-menu-down down_span" onclick="collapse_up(this)"></span>
+                    <span class="glyphicon glyphicon-menu-right right_span" onclick="collapse_down(this)"></span>
+                    <span class="village_span">{{ p.now_administrative_village }}</span>
+                    <span class="responser_span">村负责人：{{ p.now_responsible_person }}</span>
+                    <span class="home_span">贫困户数/总户数：{{ p.now_poor_home }}/{{ p.now_home_number }}</span>
+                    <span class="people_span">贫困人口数/总人口数：{{ p.now_poor_people }}/{{ p.now_people_number }}</span>
+                    {% if '贫困村数据_编辑' in CODENAMES %}
+                        <span class="glyphicon glyphicon-edit layui_span" onclick="edit_data('village','{{ p.now_village_identifier }}')"></span>
+                    {% endif %}
+                </div>
+                <div class="panel-body collapse">
+                    <div class="first_layer">
+                        <p>所属乡镇：{{ p.town_name }}</p>
+                        <p>村编号：{{ p.now_village_identifier }}</p>
+                        <p>是否为贫困村：{{ p.now_is_poor }}</p>
+                    </div>
+                    <div class="second_layer">
+                        <p>是否参与合并：{{ p.is_merge }}</p>
+                        <p>发展方向：{{ p.now_development_direction }}</p>
+                        <p>村办公电话：{{ p.now_telephone_number }}</p>
+                    </div>
+                    <div class="third_layer">
+                        <p>村官人数：{{ p.now_village_officer }}</p>
+                        <p>中共党员数：{{ p.now_party_member }}</p>
+                        <p>地形地貌：{{ p.now_terrain_physiognomy }}</p>
+                    </div>
+                    <div class="fourth_layer">
+                        <p>纬度：{{ p.now_dimension }}</p>
+                        <p>经度：{{ p.now_longitude }}</p>
+                        <p>低保户数：{{ p.now_minimum_home }}</p>
+                    </div>
+                    <div class="fifth_layer">
+                        <p>低保人口数：{{ p.now_minimum_people }}</p>
+                        <p>五保户数：{{ p.now_five_home }}</p>
+                        <p>五保人口数：{{ p.now_five_people }}</p>
+                    </div>
+                    <div class="sixth_layer">
+                        <p>少数民族人口数：{{ p.now_nation_people }}</p>
+                        <p>妇女人口数：{{ p.now_woman_people }}</p>
+                        <p>残疾人口数：{{ p.now_handicapped_people }}</p>
+                    </div>
+                    <div class="seventh_layer">
+                        <p>劳动力人数：{{ p.now_labor_people }}</p>
+                        <p>外出务工人数：{{ p.now_egression_people }}</p>
+                        <p>帮扶人员：{{ p.now_help_people }}</p>
+                    </div>
+                    <div class="eighth_layer">
+                        <p>帮扶单位：{{ p.now_help_unit }}</p>
+                        <p>帮扶方式：{{ p.now_help_way }}</p>
+                        <p>帮扶人员电话号码：{{ p.now_help_phone }}</p>
+                    </div>
+                    <div class="nineth_layer">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <td>应享政策名称</td>
+                                    <td>补助标准</td>
+                                    <td>数量</td>
+                                    <td>应享金额（元）</td>
+                                    <td>实享金额（元）</td>
+                                    <td>发放时间</td>
+                                    <td>更多信息</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in p.additionaldata %}
+                                <tr>
+                                    <td class="td_1">
+                                        <span class="td_1_span" onmouseover="showpolicy(this,'{{ item.0 }}')">{{ item.0 }}</span>
+                                    </td>
+                                    <td class="td_2">
+                                        <span class="td_2_span" onmouseover="showstandard(this,'{{ item.1 }}')">{{ item.1 }}</span>
+                                    </td>
+                                    <td class="td_3">{{ item.2 }}</td>
+                                    <td class="td_4">{{ item.3 }}</td>
+                                    {% if item.6 == 'o' %}
+                                        <td class="td_5" style="color:#FF9900;">{{ item.4 }}</td>
+                                    {% else %}
+                                        <td class="td_5">{{ item.4 }}</td>
+                                    {% endif %}
+                                    <td class="td_6">{{ item.5 }}</td>
+                                    <td class="td_7">
+                                        <span class="td_7_span" onmouseover="showmore(this,'{{ item.7 }}','{{ item.8 }}','{{ item.9 }}','{{ item.10 }}')">...</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="paging">
+        <div class="paging_edit">
+            <span onclick="convert_page({{ curpage }},{{ allpage }})">跳转</span>
+            <input type="text" id="pages" name="pages">
+        </div>
+        <div class="paging_mark">
+            {% ifnotequal curpage 1 %}    {# 如果当前页有上一页 #}
+                <span onclick="last_page({{ curpage }},{{ allpage }},'pagelast')" class="glyphicon glyphicon-chevron-left"></span>
+            {% endifnotequal %}
+            <span>
+                {{ curpage }}/{{ allpage }}    {# 当前页码/总页数 #}
+            </span>
+            {% ifnotequal curpage allpage %}    {# 如果当前页有下一页 #}
+                <span onclick="next_page({{ curpage }},{{ allpage }},'pagenext')" class="glyphicon glyphicon-chevron-right"></span>
+            {% endifnotequal %}
+        </div>
+    </div>
+{% else %}
+    <div class="nodata_part">暂无数据</div>
+{% endif %}

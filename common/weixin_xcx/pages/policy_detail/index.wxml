@@ -1,0 +1,18 @@
+<view class="page">
+
+    <view class="page__bd">
+        <view class="weui-article">
+            <view class="weui-article__h1">{{article_info.title}}</view>
+            <view class="weui-article__section">
+                <view class="weui-article__title">{{article_info.create_time}}</view>
+                <view class="weui-article__section">
+                    <!-- <view class="weui-article__h3">{{article_info.create_time}}</view> -->
+                    <view class="weui-article__p">
+                        <text>{{article_info.content}}</text>
+                    </view>
+                </view>
+
+            </view>
+        </view>
+    </view>
+</view>

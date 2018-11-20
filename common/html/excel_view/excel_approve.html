@@ -1,0 +1,198 @@
+{% extends "app_common/base_site.html" %}
+{% block title %}审核{% endblock %}
+{% block css %}
+    <style>
+    a:hover{
+        text-decoration: none;
+    }
+    .layui-table td, .layui-table th, .layui-table-fixed-r, .layui-table-header, .layui-table-page, .layui-table-tips-main, .layui-table-tool, .layui-table-view, .layui-table[lay-skin=line], .layui-table[lay-skin=row]{
+        border-color:#ffffff;
+    }
+    #paginator{
+        margin-top:30px;
+        text-align: center;
+        border-top: 1px solid #eee;
+    }
+        .layui-table td{
+            border-top: none;
+        }
+    </style>
+{% endblock %}
+{% block right_content %}
+<div class="col-xs-12">
+    <div class="page-header">
+        <h3 class="breadcrumb" style="background-color: inherit;margin-bottom: 0;">
+            <li>综合管理</li>
+            <li class="active">审核</li>
+        </h3>
+    </div>
+
+
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="/excel_view/excel_approve/">审核</a></li>
+            <li><a href="/excel_view/excel_approve1/">本部门提交的</a></li>
+        </ul>
+    </div>
+
+
+    <table class="layui-table">
+        <caption>
+            <col width="50%">
+            <col width="30%">
+            <col width="20%">
+        </caption>
+        <thead>
+            <tr>
+                <th>文件</th>
+                <th>备注</th>
+                <th>状态或操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for obj in obj_list %}
+            <tr>
+                <td>
+                    {% if obj.id == obj.max_id %}
+                    <a style="color: #8c64cf;" href="https://view.officeapps.live.com/op/view.aspx?src=https://{{request.get_host}}{{ obj.path}}" target="_blank">{{ obj.excel_path}}</a>
+                    {% else %}
+                    {{ obj.excel_path}}
+                    {% endif %}
+                </td>
+                <td>
+                    {{obj.remark|default:''}}
+                </td>
+                <td>
+                    {% if obj.id == obj.max_id %}
+                        {% if obj.status == 0 %}
+                        未通过
+                        {% elif obj.status == 1 %}
+                        已通过
+                        {% else %}
+                            <a href="javascript:;" class="layui-btn layui-btn-xs" onclick="agree_html('{{obj.id}}')">通过</a>
+                            <a href="javascript:;" class="layui-btn layui-btn-xs" onclick="reject_html('{{obj.id}}')">拒绝</a>
+                        {% endif %}
+                    {% else %}
+                    已经重新上传
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="paginator"></div>
+</div>
+
+    <div id="remark-reject" style="display: none;">
+        <div class="clearfix">
+            <div class="col-md-12 column">
+                <form role="form">
+                    <input type="hidden" name="id-reject" value="">
+                    <div class="form-group">
+                         <label>备注</label>
+                         <textarea name="remark" placeholder="" class="form-control"></textarea>
+                    </div>
+                    <button onclick="action_reject(this)" type="button" class="btn btn-default">确定</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="remark-agree" style="display: none;">
+        <div class="clearfix">
+            <div class="col-md-12 column">
+                <form role="form">
+                    <input type="hidden" name="id-agree" value="">
+                    <div class="form-group">
+                         <label>备注</label>
+                         <textarea name="remark" placeholder="" class="form-control"></textarea>
+                    </div>
+                    <button onclick="action_agree(this)" type="button" class="btn btn-default">确定</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+
+    layui.use(['laypage', 'layer'], function(){
+        var laypage = layui.laypage,layer = layui.layer,laydate = layui.laydate;element = layui.element;
+        //完整功能
+        laypage.render({
+            elem: 'paginator',
+            curr:'{{ page }}',
+            limit:'{{ every_page_number }}',
+            count: '{{ count }}',
+            layout: ['count', 'prev','page', 'next',  'skip'],
+            jump: function(obj,first){
+                console.log(obj)
+                if(!first){
+                    //layer.msg('第 '+ obj.curr +' 页');
+                    window.location.href = '{{ request.path }}?page_type={{request.GET.page_type}}&page='+obj.curr;
+                }
+            }
+        });
+    });
+    
+    function reject_html(id) {
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim', //加上边框
+            area: ['420px', '240px'], //宽高
+            content: $("#remark-reject").html()
+        });
+        $("input[name='id-reject']").val(id)
+    }
+
+    function action_reject(self) {
+        console.log($(self).parents('form').find("input[name='id-reject']").val())
+        $.post('{% url "approve_reject"%}',{
+            "id":$(self).parents('form').find("input[name='id-reject']").val(),
+            "remark":$(self).parents('form').find("textarea[name='remark']").val()
+        },function (res) {
+            if(res.code === '200'){
+                window.location.reload();
+            }
+        });
+    }
+
+    function agree_html(id) {
+        layer.open({
+            type: 1,
+            skin: 'layui-layer-rim', //加上边框
+            area: ['420px', '240px'], //宽高
+            content: $("#remark-agree").html()
+        });
+        $("input[name='id-agree']").val(id)
+    }
+
+    function action_agree(self) {
+        layui.use('layer', function() {
+            var $ = layui.jquery, layer = layui.layer;
+
+            layer.msg('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop" style="font-size: 86px;margin-top: 65px;"></i>', {
+                time: 30000, //30s后自动关闭
+                shade :0.1,
+                area: ['220px', '180px']
+            });
+        });
+        console.log($(self).parents('form').find("input[name='id-agree']").val())
+        $.post('{% url "approve_agree"%}',{
+            "id":$(self).parents('form').find("input[name='id-agree']").val(),
+            "remark":$(self).parents('form').find("textarea[name='remark']").val()
+        },function (res) {
+            console.log(res);
+            layer.closeAll();
+            if(res.code === '200'){
+                window.location.reload();
+            }else{
+                layui.use('layer', function() { //独立版的layer无需执行这一句
+                    var $ = layui.jquery, layer = layui.layer; //独立版的layer无需执行这一句
+                    layer.msg(res.message);
+                });
+            }
+        });
+    }
+    </script>
+{% endblock %}
