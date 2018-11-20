@@ -84,9 +84,9 @@ WSGI_APPLICATION = 'dawufupin.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wang',
+        'NAME': '',
         'USER': 'root',
-        'PASSWORD': 'wangbeng',
+        'PASSWORD': '',
         'HOST': '127.0.0.1',
         #'HOST':'172.18.245.94',
         'PORT': '3306',
